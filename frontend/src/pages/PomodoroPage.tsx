@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw, Coffee, Briefcase, Brain, Zap } from 'lucide-react';
+import treeGif from '../assets/tree.gif';
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
@@ -137,29 +138,34 @@ export default function PomodoroPage() {
   const Icon = config.icon;
 
   return (
-    <div className="w-full max-w-xl lg:max-w-2xl mx-auto px-4">
+    <div className="relative w-full max-w-xl lg:max-w-2xl mx-auto px-4">
+      {/* Background GIF */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <img
+          src={treeGif}
+          alt="Tree background"
+          className="w-full h-full object-cover opacity-40"
+        />
+      </div>
+      
+      {/* Content wrapper */}
+      <div className="relative z-10">
       {/* Header */}
       <div className="text-center mb-6 md:mb-10 lg:mb-12">
         <div className="flex items-center justify-center gap-2 md:gap-3 mb-2 md:mb-3">
-          <Brain className="w-7 h-7 md:w-8 md:h-8 text-cyan-400" />
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-200">Adaptywny Pomodoro</h2>
+          <Brain className="w-7 h-7 md:w-8 md:h-8 text-white" />
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">Adaptywny Pomodoro</h2>
         </div>
-        <p className="text-xs sm:text-sm md:text-base text-gray-400">Timer dostosowujący się do Twojego stanu flow</p>
-        <div className="mt-2 md:mt-3 inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-cyan-500/10 rounded-full border border-cyan-500/30">
-          <Zap className="w-3 h-3 md:w-4 md:h-4 text-cyan-400" />
-          <span className="text-xs md:text-sm text-cyan-400 font-medium">Automatyczne dostosowanie czasu pracy</span>
+        <p className="text-xs sm:text-sm md:text-base text-white/70">Timer dostosowujący się do Twojego stanu flow</p>
+        <div className="mt-2 md:mt-3 inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-white/10 rounded-full border border-white/30">
+          <Zap className="w-3 h-3 md:w-4 md:h-4 text-white" />
+          <span className="text-xs md:text-sm text-white font-medium">Automatyczne dostosowanie czasu pracy</span>
         </div>
       </div>
 
       {/* Current Mode Display - No manual switching */}
       <div className="flex justify-center mb-4 md:mb-6 lg:mb-8">
-        <div className={`px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-xs sm:text-sm md:text-base font-semibold border-2 ${
-          mode === 'work'
-            ? 'bg-sky-500/20 text-sky-400 border-sky-500/50'
-            : mode === 'shortBreak'
-            ? 'bg-green-500/20 text-green-400 border-green-500/50'
-            : 'bg-blue-500/20 text-blue-400 border-blue-500/50'
-        }`}>
+        <div className="px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-xs sm:text-sm md:text-base font-semibold border-2 bg-white/10 text-white border-white/30">
           {mode === 'work' && <Briefcase className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />}
           {mode !== 'work' && <Coffee className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />}
           {mode === 'work' ? 'Sesja Pracy' : mode === 'shortBreak' ? 'Krótka Przerwa' : 'Długa Przerwa'}
@@ -167,14 +173,14 @@ export default function PomodoroPage() {
       </div>
 
       {/* Main Timer Display */}
-      <div className={`bg-gradient-to-br ${config.color} backdrop-blur-sm rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-10 lg:p-12 border-2 ${config.borderColor} mb-4 md:mb-6 lg:mb-8`}>
+      <div className="bg-white/5 backdrop-blur-md rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-10 lg:p-12 border-2 border-white/20 mb-4 md:mb-6 lg:mb-8">
         <div className="text-center">
           {/* Mode Title */}
           <div className="flex items-center justify-center mb-3 sm:mb-4 md:mb-6">
-            <Icon className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 mr-2 md:mr-3 ${config.textColor}`} />
+            <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 mr-2 md:mr-3 text-white" />
             <div>
-              <h3 className={`text-lg sm:text-xl md:text-2xl font-bold ${config.textColor}`}>{config.title}</h3>
-              <p className="text-gray-400 text-xs sm:text-xs md:text-sm">{config.subtitle}</p>
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white">{config.title}</h3>
+              <p className="text-white/70 text-xs sm:text-xs md:text-sm">{config.subtitle}</p>
             </div>
           </div>
 
@@ -189,7 +195,7 @@ export default function PomodoroPage() {
                 stroke="currentColor"
                 strokeWidth="8"
                 fill="none"
-                className="text-gray-800"
+                className="text-white/20"
               />
               <circle
                 cx="160"
@@ -200,14 +206,14 @@ export default function PomodoroPage() {
                 fill="none"
                 strokeDasharray={`${2 * Math.PI * 140}`}
                 strokeDashoffset={`${2 * Math.PI * 140 * (1 - progress / 100)}`}
-                className={`${config.textColor} transition-all duration-1000 ease-linear`}
+                className="text-white transition-all duration-1000 ease-linear"
                 strokeLinecap="round"
               />
             </svg>
             
             {/* Time Display */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-200 font-mono">
+              <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white font-mono">
                 {formatTime(timeLeft)}
               </span>
             </div>
@@ -217,11 +223,7 @@ export default function PomodoroPage() {
           <div className="flex justify-center gap-2 sm:gap-3 md:gap-4">
             <button
               onClick={handleToggle}
-              className={`px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg text-xs sm:text-sm md:text-base font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 ${
-                isActive
-                  ? 'bg-yellow-500/20 text-yellow-400 border-2 border-yellow-500/50 hover:bg-yellow-500/30'
-                  : `${config.textColor} border-2 ${config.borderColor}`
-              } ${!isActive && mode === 'work' ? 'bg-sky-500/20 hover:bg-sky-500/30' : ''} ${!isActive && mode === 'shortBreak' ? 'bg-green-500/20 hover:bg-green-500/30' : ''} ${!isActive && mode === 'longBreak' ? 'bg-blue-500/20 hover:bg-blue-500/30' : ''}`}
+              className="px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg text-xs sm:text-sm md:text-base font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 bg-white/10 text-white border-2 border-white/30 hover:bg-white/20 hover:border-white/40"
             >
               {isActive ? (
                 <>
@@ -237,7 +239,7 @@ export default function PomodoroPage() {
             </button>
             <button
               onClick={handleReset}
-              className="px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg text-xs sm:text-sm md:text-base font-semibold transition-all duration-300 bg-gray-900/40 text-gray-400 border-2 border-gray-700 hover:border-gray-600 hover:text-gray-300 flex items-center gap-1.5 sm:gap-2"
+              className="px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg text-xs sm:text-sm md:text-base font-semibold transition-all duration-300 bg-white/5 text-white/70 border-2 border-white/20 hover:border-white/30 hover:text-white flex items-center gap-1.5 sm:gap-2"
             >
               <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />
               Reset
@@ -247,21 +249,22 @@ export default function PomodoroPage() {
       </div>
 
       {/* Pomodoro Counter */}
-      <div className="bg-gray-900/40 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border-2 border-gray-700 text-center">
-        <h4 className="text-sm sm:text-base md:text-lg font-semibold text-gray-300 mb-2 md:mb-3">Ukończone Pomodoro</h4>
+      <div className="bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border-2 border-white/20 text-center">
+        <h4 className="text-sm sm:text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Ukończone Pomodoro</h4>
         <div className="flex justify-center gap-1.5 sm:gap-2">
           {[...Array(completedPomodoros % 4 || (completedPomodoros > 0 ? 4 : 0))].map((_, i) => (
-            <div key={i} className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-sky-500"></div>
+            <div key={i} className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white"></div>
           ))}
           {[...Array(4 - (completedPomodoros % 4 || (completedPomodoros > 0 ? 4 : 0)))].map((_, i) => (
-            <div key={i} className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gray-700"></div>
+            <div key={i} className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white/20"></div>
           ))}
         </div>
-        <p className="text-gray-400 text-xs sm:text-sm mt-2 md:mt-3">
-          Łącznie: <span className="font-bold text-gray-200">{completedPomodoros}</span> pomodoro
+        <p className="text-white/70 text-xs sm:text-sm mt-2 md:mt-3">
+          Łącznie: <span className="font-bold text-white">{completedPomodoros}</span> pomodoro
         </p>
       </div>
-
+      
+      </div>
     </div>
   );
 }
