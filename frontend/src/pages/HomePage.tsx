@@ -50,6 +50,15 @@ export default function HomePage() {
 			path: '/pomodoro',
 			status: 'active',
 		},
+
+		{
+			id: 'concentration',
+			title: 'Trening Koncentracji',
+			description: 'Ćwiczenia poprawiające twoją zdolność skupienia uwagi',
+			color: '#f59e0b',
+			path: '/concentration',
+			status: 'active'
+		}
 	];
 
 	return (
