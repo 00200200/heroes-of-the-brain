@@ -37,8 +37,13 @@ async def get_current():
         MetricsResponse: Current stress, focus and tiredness levels.
     """
     # Collect results from three separate model singletons
+    # return {
+    #     "stress_level": stress_service.get_value(),
+    #     "focus_level": focus_service.get_value(),
+    #     "tiredness_level": tiredness_service.get_value(),
+    # }
     return {
-        "stress_level": stress_service.get_value(),
-        "focus_level": focus_service.get_value(),
-        "tiredness_level": tiredness_service.get_value(),
+        "stress_level": 30,
+        "focus_level": 65,
+        "tiredness_level": 20,
     }

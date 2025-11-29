@@ -7,15 +7,22 @@ development.
 """
 
 from fastapi import FastAPI
-
+from fastapi.middleware.cors import CORSMiddleware
 # Import the API router created in the project
 from src.api.mental_metric_routes import router as metrics_router
 
 
 app = FastAPI(title="heroes-of-the-brain - backend")
 
-# Mount metric-related routes under /metrics
-app.include_router(metrics_router, prefix="/metrics")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(metrics_router, prefix="/api/metrics")
 
 
 @app.get("/health")

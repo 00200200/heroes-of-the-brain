@@ -71,7 +71,7 @@ class ApiService {
 		}
 	}
 	async getMentalMetrics(): Promise<MentalMetrics> {
-		const response = await fetch(`${this.baseUrl}/mental-metrics/current`);
+		const response = await fetch(`${this.baseUrl}/metrics/current`);
 		if (!response.ok) {
 			throw new Error('Failed to fetch mental metrics');
 		}
