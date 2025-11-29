@@ -27,6 +27,10 @@ export interface MentalMetrics {
 	timestamp: string;
 }
 
+
+export interface MusicRecommendationResponse {
+	music_type: 'focus' | 'relax' | 'energy' | 'deep_relax';
+}
 class ApiService {
 	private baseUrl: string;
 
@@ -75,6 +79,14 @@ class ApiService {
 		const response = await fetch(`${this.baseUrl}/metrics/current`);
 		if (!response.ok) {
 			throw new Error('Failed to fetch mental metrics');
+		}
+		return response.json();
+	}
+
+	async getMusicRecommendation(): Promise<MusicRecommendationResponse> {
+		const response = await fetch(`${this.baseUrl}/metrics/music`);
+		if (!response.ok) {
+			throw new Error('Failed to set music');
 		}
 		return response.json();
 	}
