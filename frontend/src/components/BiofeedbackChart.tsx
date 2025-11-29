@@ -26,20 +26,35 @@ export default function BiofeedbackChart() {
 	const [error, setError] = useState<string | null>(null);
 
 
-    useEffect(() => {
+        useEffect(() => {
         let timeoutId: ReturnType<typeof setTimeout>;
 
         const fetchData = async () => {
             try {
-                const historyData = await apiService.getMetricsHistory();
-                setData(historyData); // Zakładamy, że backend zwraca poprawny format
+                // 1. Pobieramy JEDEN aktualny punkt z backendu
+                const newPoint = await apiService.getMentalMetrics(); 
+                
+                // 2. Dodajemy go do istniejącej historii (używając callbacka w setData)
+                setData(prevData => {
+                    // Tworzymy nową tablicę: [...stare, nowy]
+                    const updatedHistory = [...prevData, newPoint];
+
+                    // 3. Ograniczamy historię do ostatnich 20 punktów
+                    // (żeby wykres nie ścisnął się w nieskończoność po godzinie działania)
+                    if (updatedHistory.length > 50) {
+                        return updatedHistory.slice(-50); // Zwróć tylko 20 ostatnich
+                    }
+                    
+                    return updatedHistory;
+                });
+                
                 setError(null);
             } catch (err) {
                 console.error('Error fetching metrics:', err);
             } finally {
                 setLoading(false);
-                // ZMIANA: 5000 ms = 5 sekund
-                timeoutId = setTimeout(fetchData, 5000);
+                // 4. Czekamy 5 sekund na kolejne pobranie
+                timeoutId = setTimeout(fetchData, 1000);
             }
         };
 
@@ -114,8 +129,8 @@ export default function BiofeedbackChart() {
 							tickLine={false}
 							axisLine={false}
 							dy={10}
-							ticks={getXAxisTicks()}
-							interval='preserveStartEnd'
+							interval="preserveStartEnd" // Zawsze pokaż pierwszy i ostatni czas
+                   			minTickGap={30}
 						/>
 						<YAxis stroke='#9ca3af' fontSize={12} tickLine={false} axisLine={false} dx={-10} domain={[0, 100]} />
 
