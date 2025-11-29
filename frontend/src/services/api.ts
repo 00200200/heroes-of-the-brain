@@ -1,11 +1,9 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
-
 export interface PomodoroRequest {
 	mental_state: 'focused' | 'stressed' | 'tired' | 'relaxed';
 	stress_level: number;
 }
-
 
 export interface PomodoroResponse {
 	work_duration: number;
@@ -16,7 +14,6 @@ export interface PomodoroResponse {
 	stress_level: number;
 	recommendation: string;
 }
-
 
 export interface MentalStatesResponse {
 	states: string[];
@@ -36,6 +33,43 @@ class ApiService {
 		this.baseUrl = API_URL;
 	}
 
+	async calculatePomodoro(request: PomodoroRequest): Promise<PomodoroResponse> {
+		try {
+			const url = `${this.baseUrl}/pomodoro/calculate?mental_state=${request.mental_state}&stress_level=${request.stress_level}`;
+
+			const response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+
+			if (!response.ok) {
+				const error = await response.json().catch(() => ({ detail: response.statusText }));
+				throw new Error(error.detail || 'Failed to calculate pomodoro');
+			}
+
+			return await response.json();
+		} catch (error) {
+			console.error('Failed to calculate pomodoro:', error);
+			throw error;
+		}
+	}
+
+	async getMentalStates(): Promise<MentalStatesResponse> {
+		try {
+			const response = await fetch(`${this.baseUrl}/pomodoro/states`);
+
+			if (!response.ok) {
+				throw new Error(`API Error: ${response.statusText}`);
+			}
+
+			return await response.json();
+		} catch (error) {
+			console.error('Failed to fetch mental states:', error);
+			throw error;
+		}
+	}
 	async getMentalMetrics(): Promise<MentalMetrics> {
 		const response = await fetch(`${this.baseUrl}/mental-metrics/current`);
 		if (!response.ok) {
@@ -52,3 +86,5 @@ class ApiService {
 		return response.json();
 	}
 }
+
+export const apiService = new ApiService();
