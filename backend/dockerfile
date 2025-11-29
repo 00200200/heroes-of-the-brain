@@ -1,0 +1,26 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# System dependencies required for building Python packages (git, bluez headers)
+RUN apt-get update && apt-get install -y \
+    git \
+    gcc \
+    libbluetooth-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv for speed
+RUN pip install uv
+
+# Copy config
+COPY pyproject.toml README.md ./
+
+# Install Base + Server dependencies
+RUN uv pip install --system ".[server]"
+
+# Copy source code
+COPY src ./src
+COPY config ./config
+
+# Run the API
+CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
