@@ -22,10 +22,6 @@ class StressModel:
     def calculate(self, alpha: List[float], beta: List[float]) -> None:
         """Calculate and update the stress level.
 
-        The method computes the mean of beta divided by mean of alpha (with
-        a small epsilon to avoid division by zero), normalizes the ratio,
-        and clamps the result to the 0-100 integer range.
-
         Args:
             alpha: Sequence of alpha-wave amplitudes.
             beta: Sequence of beta-wave amplitudes.
@@ -33,11 +29,15 @@ class StressModel:
         Side effects:
             Updates the internal `_level` attribute.
         """
-        # Beta/Alpha ratio for stress estimation
+        # Stress: znormalizuj beta/alpha do zakresu 0.5-2.0
         if not alpha or not beta:
             return
         ratio = np.mean(beta) / (np.mean(alpha) + 0.01)
-        self._level = min(100, abs(int((ratio / 3.0) * 100)))
+        min_ratio = 0.5
+        max_ratio = 2.0
+        norm = (ratio - min_ratio) / (max_ratio - min_ratio)
+        norm = max(0.0, min(1.0, norm))
+        self._level = int(norm * 100)
 
     def get_value(self) -> int:
         """Return the last-computed stress level.

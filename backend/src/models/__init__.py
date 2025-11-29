@@ -1,9 +1,14 @@
+
 import os
 import glob
 import numpy as np
+from collections import deque
 from src.models.focus_model import focus_service
 from src.models.stress_model import stress_service
 from src.models.tiredness_model import tiredness_service
+
+# Bufor na 10 ostatnich odczytów EEG (każdy: macierz próbek z CSV)
+_eeg_buffer = deque(maxlen=10)
 
 def update_models_from_latest_csv():
 	"""
@@ -20,18 +25,22 @@ def update_models_from_latest_csv():
 	latest = max(files, key=os.path.getmtime)
 	logging.info(f"Używany plik: {latest}")
 	arr = np.genfromtxt(latest, delimiter=',', skip_header=1)
-	logging.info(f"Wczytana macierz: {arr}")
 	if arr.ndim == 1:
 		arr = arr[np.newaxis, :]
-	# EEG: kolumny 1:9 (8 kanałów)
 	eeg = arr[:, 1:9]
 	logging.info(f"Wycięte EEG: {eeg}")
-	# Demo: beta = mean z kanałów 0,1,2; alpha = mean z kanałów 3,4,5; theta = mean z kanałów 6,7
-	beta = np.mean(eeg[:, :3], axis=1)
-	alpha = np.mean(eeg[:, 3:6], axis=1)
-	theta = np.mean(eeg[:, 6:8], axis=1)
+	# Dodaj do bufora
+	_eeg_buffer.append(eeg)
+	# Połącz wszystkie EEG z bufora
+	if len(_eeg_buffer) == 0:
+		logging.warning("Bufor EEG pusty!")
+		return
+	all_eeg = np.vstack(_eeg_buffer)
+	logging.info(f"Bufor EEG (połączony): {all_eeg}")
+	beta = np.mean(all_eeg[:, :3], axis=1)
+	alpha = np.mean(all_eeg[:, 3:6], axis=1)
+	theta = np.mean(all_eeg[:, 6:8], axis=1)
 	logging.info(f"beta: {beta}, alpha: {alpha}, theta: {theta}")
-	# Uśrednij po czasie
 	beta_val = beta.mean()
 	alpha_val = alpha.mean()
 	theta_val = theta.mean()
@@ -40,4 +49,5 @@ def update_models_from_latest_csv():
 	focus_service.calculate([beta_val])
 	stress_service.calculate([alpha_val], [beta_val])
 	tiredness_service.calculate([alpha_val], [theta_val], [beta_val])
+	logging.info(f"focus: {focus_service.get_value()}, stress: {stress_service.get_value()}, tiredness: {tiredness_service.get_value()}")
 	logging.info(f"focus: {focus_service.get_value()}, stress: {stress_service.get_value()}, tiredness: {tiredness_service.get_value()}")

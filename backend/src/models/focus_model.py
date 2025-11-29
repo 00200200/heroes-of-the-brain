@@ -29,10 +29,15 @@ class FocusModel:
         Side effects:
             Updates `_level` with an integer between 0 and 100.
         """
-        # Focus mainly depends on beta waves
+        # Focus: znormalizuj mean(beta) do zakresu 5-30uV²
         if not beta:
             return
-        self._level = min(100, abs(int((np.mean(beta) / 50.0) * 100)))
+        min_beta = 5.0
+        max_beta = 30.0
+        val = np.mean(beta)
+        norm = (val - min_beta) / (max_beta - min_beta)
+        norm = max(0.0, min(1.0, norm))
+        self._level = int(norm * 100)
 
     def get_value(self) -> int:
         """Return the last-computed focus level.
