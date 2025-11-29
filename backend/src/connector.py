@@ -124,7 +124,7 @@ if __name__ == "__main__":
         # Zmienne kontrolne
         last_idx = 0
         last_save_time = time.time()
-        save_interval = 3.0
+        save_interval = 1.0
         annotation = 1
 
         try:
@@ -132,10 +132,10 @@ if __name__ == "__main__":
             while True:
                 current_time = time.time()
 
-                # Timer: Co 3 sekundy
+                # Timer: Co 1 sekundę
                 if current_time - last_save_time >= save_interval:
                     
-                    print(f"--- 3s  Tick: Annotation {annotation}")
+                    print(f"--- 1s Tick: Annotation {annotation}")
                     try:
                         eeg.annotate(str(annotation))
                     except:

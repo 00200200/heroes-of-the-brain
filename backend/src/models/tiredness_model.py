@@ -28,6 +28,9 @@ class TirednessModel:
     def calculate(self, alpha: List[float], theta: List[float], beta: List[float]) -> None:
         """Calculate and update the tiredness level.
 
+        The formula used is: tiredness = (mean(alpha) + mean(theta)) / mean(beta).
+        The result is scaled to a 0-100 integer range.
+
         Args:
             alpha: List of alpha-wave amplitude values.
             theta: List of theta-wave amplitude values.
@@ -38,17 +41,12 @@ class TirednessModel:
             between 0 and 100. If any input list is empty or falsy, the
             method does nothing.
         """
-        # Tiredness: znormalizuj (alpha+theta)/beta do zakresu 1-4
+        # Tiredness = (alpha + theta) / beta
         if not alpha or not theta or not beta:
             return
         numerator = np.mean(alpha) + np.mean(theta)
         denominator = np.mean(beta) + 0.01  # Small epsilon to avoid division by zero
-        ratio = numerator / denominator
-        min_ratio = 1.0
-        max_ratio = 4.0
-        norm = (ratio - min_ratio) / (max_ratio - min_ratio)
-        norm = max(0.0, min(1.0, norm))
-        self._level = int(norm * 100)
+        self._level = min(100, abs(int((numerator / denominator / 3.0) * 100)))
 
     def get_value(self) -> int:
         """Return the last-computed tiredness level.
