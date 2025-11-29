@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-//TODO Pomodoro Page --- Stress Page --- below
-//import HomePage from './pages/HomePage'
+import HomePage from './pages/HomePage'
+import StressPage from './pages/StressPage'
 //import PomodoroPage from './pages/PomodoroPage'
 import './App.css'
 import Layout from './components/Layout/Layout';
+import { Home } from 'lucide-react';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(
@@ -34,9 +33,8 @@ function App() {
   return (
     // temporary layout structure
     <Layout> 
-      {currentPage === 'home' && <div>Home Page Component</div>}
-      {currentPage === 'pomodoro' && <div>Pomodoro Page Component</div>}
-      {currentPage === 'stress' && <div>Stress Page Component</div>}  
+      {currentPage === 'home' && <HomePage></HomePage>}
+      {currentPage === 'stress' && <StressPage></StressPage>}  
     </Layout>
   );
 
