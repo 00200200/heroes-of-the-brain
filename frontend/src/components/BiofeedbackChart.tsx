@@ -25,43 +25,36 @@ export default function BiofeedbackChart() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				setLoading(true);
-				const historyData = await apiService.getMetricsHistory(20);
-				setData(
-					historyData.map(point => ({
-						timestamp: point.timestamp,
-						stress_level: point.stress_level,
-						focus_level: point.focus_level,
-						tiredness_level: point.tiredness_level,
-					}))
-				);
-				setError(null);
-			} catch (err) {
-				setError("Can't fetch data check backend");
-				console.error('Error fetching metrics history:', err);
-			} finally {
-				setLoading(false);
-			}
-		};
 
-		fetchData();
+    useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout>;
 
-		const interval = setInterval(fetchData, 10000);
+        const fetchData = async () => {
+            try {
+                const historyData = await apiService.getMetricsHistory();
+                setData(historyData); // Zakładamy, że backend zwraca poprawny format
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching metrics:', err);
+            } finally {
+                setLoading(false);
+                // ZMIANA: 5000 ms = 5 sekund
+                timeoutId = setTimeout(fetchData, 5000);
+            }
+        };
 
-		return () => clearInterval(interval);
-	}, []);
+        fetchData();
+        return () => clearTimeout(timeoutId);
+    }, []);
 
-	const getXAxisTicks = () => {
-		if (data.length <= 10) return undefined;
-		const step = Math.ceil(data.length / 8);
-		return data
-			.map((_, index) => index)
-			.filter((_, index) => index % step === 0)
-			.map(index => data[index].timestamp);
-	};
+	// const getXAxisTicks = () => {
+	// 	if (data.length <= 10) return undefined;
+	// 	const step = Math.ceil(data.length / 8);
+	// 	return data
+	// 		.map((_, index) => index)
+	// 		.filter((_, index) => index % step === 0)
+	// 		.map(index => data[index].timestamp);
+	// };
 
 	if (loading && data.length === 0) {
 		return (

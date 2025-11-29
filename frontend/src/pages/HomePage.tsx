@@ -18,26 +18,27 @@ export default function HomePage() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		const fetchMetrics = async () => {
-			try {
-				setLoading(true);
-				const data = await apiService.getMentalMetrics();
-				setMetrics(data);
-				setError(null);
-				console.log('Fetched metrics:', data);
-			} catch (err) {
-				console.error('Failed to fetch metrics:', err);
-				setError("Can't fetch data check backend");
-			} finally {
-				setLoading(false);
-			}
-		};
+		useEffect(() => {
+			let timeoutId: ReturnType<typeof setTimeout>;
 
-		fetchMetrics();
-		const interval = setInterval(fetchMetrics, 5000);
-		return () => clearInterval(interval);
-	}, []);
+			const fetchMetrics = async () => {
+				try {
+					setLoading(true);
+					const data = await apiService.getMentalMetrics();
+					setMetrics(data);
+				} catch (err) {
+					console.error(err);
+				} finally {
+					setLoading(false);
+					// Ustawiamy kolejne wywołanie dopiero PO zakończeniu obecnego
+					timeoutId = setTimeout(fetchMetrics, 30000);
+				}
+			};
+
+			fetchMetrics();
+
+			return () => clearTimeout(timeoutId);
+		}, []);
 
 	const modules = [
 		{
