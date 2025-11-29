@@ -5,6 +5,7 @@ import stressRedGif from '../assets/sky_violet.gif';
 import solvroCat from '../assets/solvro_cat.gif';
 import pomodoroGif from '../assets/tomato.gif';
 import concentrationGif from '../assets/flying_monster.gif';
+import sleepGif from '../assets/night_sky.gif';
 
 import BiofeedbackChart from '../components/BiofeedbackChart';
 
@@ -75,6 +76,7 @@ export default function HomePage() {
 			color: '#8b5cf6',
 			path: '/sleep',
 			status: 'active',
+			background: sleepGif,
 		},
 	];
 
