@@ -24,6 +24,7 @@ export interface MentalMetrics {
 	stress_level: number;
 	focus_level: number;
 	tiredness_level: number;
+	timestamp: string;
 }
 
 class ApiService {
@@ -78,10 +79,10 @@ class ApiService {
 		return response.json();
 	}
 
-	async getMentalMetricsHistory(limit: number = 10): Promise<MentalMetrics[]> {
-		const response = await fetch(`${this.baseUrl}/mental-metrics/history?limit=${limit}`);
+	async getMetricsHistory(limit: number = 20): Promise<MentalMetrics[]> {
+		const response = await fetch(`${this.baseUrl}/metrics/history?limit=${limit}`);
 		if (!response.ok) {
-			throw new Error('Failed to fetch mental metrics history');
+			throw new Error('Failed to fetch metrics history');
 		}
 		return response.json();
 	}
