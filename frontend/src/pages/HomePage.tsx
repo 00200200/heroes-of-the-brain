@@ -12,6 +12,14 @@ export default function HomePage() {
 		path: '/stress',
 		status: 'active',
 		background: circleRunGif
+	},
+	{
+		id: 'pomodoro',
+		title: 'Adaptywny Pomodoro',
+		description: 'Timer dostosowujący się do Twojego stanu flow',
+		color: '#0ea5e9',
+		path: '/pomodoro',
+		status: 'active',
 	}
 
   ];
