@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import HomePage from './pages/HomePage'
 import StressPage from './pages/StressPage'
-//import PomodoroPage from './pages/PomodoroPage'
+import PomodoroPage from './pages/PomodoroPage'
 import './App.css'
 import Layout from './components/Layout/Layout';
 import { Home } from 'lucide-react';
@@ -34,7 +34,8 @@ function App() {
     // temporary layout structure
     <Layout> 
       {currentPage === 'home' && <HomePage></HomePage>}
-      {currentPage === 'stress' && <StressPage></StressPage>}  
+      {currentPage === 'stress' && <StressPage></StressPage>}
+      {currentPage === 'pomodoro' && <PomodoroPage></PomodoroPage>}  
     </Layout>
   );
 

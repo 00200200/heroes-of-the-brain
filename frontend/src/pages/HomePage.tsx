@@ -10,6 +10,14 @@ export default function HomePage() {
 		color: '#3b82f6',
 		path: '/stress',
 		status: 'active',
+	},
+	{
+		id: 'pomodoro',
+		title: 'Pomodoro Timer',
+		description: 'Technika zarządzania czasem dla maksymalnej produktywności',
+		color: '#0ea5e9',
+		path: '/pomodoro',
+		status: 'active',
 	}
 
   ];
