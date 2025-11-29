@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from src.models.stress_model import stress_service
 from src.models.focus_model import focus_service
 from src.models.tiredness_model import tiredness_service
+from src.models.music_model import music_service
 
 router = APIRouter()
 
@@ -50,6 +51,14 @@ async def get_current():
         "stress_level": 30,
         "focus_level": 65,
         "tiredness_level": 20,
+    }
+
+
+@router.get("/music")
+async def get_music(music: str):
+    music_service.set_music(music)
+    return {
+        "music_type": music_service.get_value(),
     }
 
 
