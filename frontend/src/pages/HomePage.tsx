@@ -12,6 +12,15 @@ export default function HomePage() {
 		path: '/stress',
 		status: 'active',
 		background: stressRedGif
+	},
+	
+	{
+		id: 'pomodoro',
+		title: 'Pomodoro',
+		description: 'Spersonalizowane sesje pracy oparte na twoim stanie umysłu',
+		color: '#10b981',
+		path: '/pomodoro',
+		status: 'active'
 	}
 
   ];
