@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 
-import stressRedGif from '../assets/windy-tree.gif';
+import stressRedGif from '../assets/sky_violet.gif';
 import solvroCat from '../assets/solvro_cat.gif';
-import pomodoroGif from '../assets/duck.gif';
+import pomodoroGif from '../assets/tomato.gif';
 import concentrationGif from '../assets/flying_monster.gif';
 
 import BiofeedbackChart from '../components/BiofeedbackChart';
@@ -64,8 +64,6 @@ export default function HomePage() {
 			description: 'Ćwiczenia poprawiające twoją zdolność skupienia uwagi',
 			color: '#f59e0b',
 			path: '/concentration',
-			status: 'active',
-			background: concentrationGif,
 			status: 'active',
 			background: concentrationGif,
 		}

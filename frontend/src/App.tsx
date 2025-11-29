@@ -6,6 +6,8 @@ import ConcentrationPage from './pages/ConcentrationPage'
 import './App.css'
 import Layout from './components/Layout/Layout';
 import { Home } from 'lucide-react';
+import MusicPlayer from './components/context/MusicPlayer'
+import { MusicProvider } from './components/context/MusicContext'
 
 function App() {
   const [currentPage, setCurrentPage] = useState(
@@ -40,7 +42,10 @@ function App() {
       {currentPage === 'home' && <HomePage></HomePage>}
       {currentPage === 'stress' && <StressPage></StressPage>}
       {currentPage === 'pomodoro' && <PomodoroPage></PomodoroPage>}
-      {currentPage === 'concentration' && <ConcentrationPage></ConcentrationPage>}  
+      {currentPage === 'concentration' && <ConcentrationPage></ConcentrationPage>} 
+      <MusicProvider>
+      <MusicPlayer />
+      </MusicProvider>
     </Layout>
   );
 
