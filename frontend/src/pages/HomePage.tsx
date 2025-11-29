@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 import stressRedGif from '../assets/windy-tree.gif';
+import BiofeedbackChart from '../components/BiofeedbackChart';
 
 export default function HomePage() {
 	const [metrics, setMetrics] = useState<{
@@ -73,7 +74,7 @@ export default function HomePage() {
 						{error}
 					</div>
 				)}
-
+				<BiofeedbackChart />
 				{loading && !metrics ? (
 					<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
 						{[1, 2, 3].map(i => (
