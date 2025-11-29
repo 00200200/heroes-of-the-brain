@@ -115,7 +115,7 @@ export default function ConcentrationDrill() {
       </div>
 
       {/* Panel Celu */}
-      <div className={`transition-opacity duration-300 mb-6 ${gameState === 'playing' ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`transition-opacity duration-0 mb-6 ${gameState === 'playing' ? 'opacity-100' : 'opacity-0'}`}>
         <div className="flex items-center gap-3 bg-white px-6 py-2 rounded-full shadow-sm border border-indigo-100">
           <span className="text-gray-500 font-medium uppercase text-xs tracking-wide">Twój cel:</span>
           <div className={`w-4 h-4 rounded-full ${targetColor.value}`} />
@@ -128,19 +128,19 @@ export default function ConcentrationDrill() {
         onClick={gameState === 'playing' ? handleReaction : undefined}
         className={`
           relative flex items-center justify-center w-64 h-64 mb-8
-          rounded-full transition-all duration-200 outline-none
+          rounded-full transition-all duration-0 outline-none
           ${gameState === 'playing' ? 'cursor-pointer active:scale-95' : 'cursor-default'}
         `}
       >
         {/* Tło "duch" */}
-        <div className={`absolute inset-0 rounded-full opacity-20 transition-colors duration-300 ${gameState === 'playing' ? currentColor.value : 'bg-gray-300'}`} />
+        <div className={`absolute inset-0 rounded-full opacity-20 transition-colors duration-0 ${gameState === 'playing' ? currentColor.value : 'bg-gray-300'}`} />
         
         {/* Główne koło */}
         <div
           className={`
             flex flex-col items-center justify-center
             w-48 h-48 rounded-full shadow-xl
-            transition-colors duration-150 ease-out
+            transition-colors duration-0 ease-out
             ${gameState === 'playing' ? currentColor.value : 'bg-gray-200'}
             ${gameState === 'playing' ? 'shadow-indigo-200' : ''}
           `}
