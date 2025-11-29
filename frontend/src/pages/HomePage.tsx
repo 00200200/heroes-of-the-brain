@@ -66,7 +66,16 @@ export default function HomePage() {
 			path: '/concentration',
 			status: 'active',
 			background: concentrationGif,
-		}
+		},
+
+		{
+			id: 'sleep',
+			title: 'Przygotowanie do Snu',
+			description: 'Relaksacyjne techniki ułatwiające zasypianie',
+			color: '#8b5cf6',
+			path: '/sleep',
+			status: 'active',
+		},
 	];
 
 	return (

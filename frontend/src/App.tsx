@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
+
 import HomePage from './pages/HomePage'
 import StressPage from './pages/StressPage'
 import PomodoroPage from './pages/PomodoroPage'
 import ConcentrationPage from './pages/ConcentrationPage'
+import SleepPreparationPage from './pages/SleepPage'
+
 import './App.css'
 import Layout from './components/Layout/Layout';
 import { Home } from 'lucide-react';
@@ -14,6 +17,7 @@ function App() {
 		window.location.hash === '#/pomodoro' ? 'pomodoro' :
 		window.location.hash === '#/stress' ? 'stress' :
     window.location.hash === '#/concentration' ? 'concentration' :
+    window.location.hash === '#/sleep' ? 'sleep' :
 		'home'
 	);
 
@@ -26,9 +30,11 @@ function App() {
 				setCurrentPage('stress');
 			} else if (hash === '#/concentration')
         setCurrentPage('concentration')
-      else {
-				setCurrentPage('home');
-			}
+      else if (hash === '#/sleep') {
+				setCurrentPage('sleep');
+			} else {
+        setCurrentPage('home');
+      }
 		};
 
     window.addEventListener('hashchange', handleHashChange);
@@ -42,7 +48,8 @@ function App() {
       {currentPage === 'home' && <HomePage></HomePage>}
       {currentPage === 'stress' && <StressPage></StressPage>}
       {currentPage === 'pomodoro' && <PomodoroPage></PomodoroPage>}
-      {currentPage === 'concentration' && <ConcentrationPage></ConcentrationPage>} 
+      {currentPage === 'concentration' && <ConcentrationPage></ConcentrationPage>}
+      {currentPage === 'sleep' && <SleepPreparationPage></SleepPreparationPage>} 
       <MusicProvider>
       <MusicPlayer />
       </MusicProvider>
