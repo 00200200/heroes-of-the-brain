@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import HomePage from './pages/HomePage'
 import StressPage from './pages/StressPage'
 import PomodoroPage from './pages/PomodoroPage'
+import ConcentrationPage from './pages/ConcentrationPage'
 import './App.css'
 import Layout from './components/Layout/Layout';
 import { Home } from 'lucide-react';
@@ -10,6 +11,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(
 		window.location.hash === '#/pomodoro' ? 'pomodoro' :
 		window.location.hash === '#/stress' ? 'stress' :
+    window.location.hash === '#/concentration' ? 'concentration' :
 		'home'
 	);
 
@@ -20,7 +22,9 @@ function App() {
 				setCurrentPage('pomodoro');
 			} else if (hash === '#/stress') {
 				setCurrentPage('stress');
-			} else {
+			} else if (hash === '#/concentration')
+        setCurrentPage('concentration')
+      else {
 				setCurrentPage('home');
 			}
 		};
@@ -35,7 +39,8 @@ function App() {
     <Layout> 
       {currentPage === 'home' && <HomePage></HomePage>}
       {currentPage === 'stress' && <StressPage></StressPage>}
-      {currentPage === 'pomodoro' && <PomodoroPage></PomodoroPage>}  
+      {currentPage === 'pomodoro' && <PomodoroPage></PomodoroPage>}
+      {currentPage === 'concentration' && <ConcentrationPage></ConcentrationPage>}  
     </Layout>
   );
 
