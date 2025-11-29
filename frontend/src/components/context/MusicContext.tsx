@@ -5,6 +5,8 @@ import relaxTrack from '../../assets/music/Subwoofer_Lullaby.mp3';
 import energyTrack from '../../assets/music/Subwoofer_Lullaby.mp3';
 import deepRelaxTrack from '../../assets/music/Subwoofer_Lullaby.mp3';
 
+import { apiService } from '../../services/api';
+
 type MusicType = 'focus' | 'relax' | 'energy' | 'deep_relax' | 'none';
 
 // Mapa typów muzyki do plików

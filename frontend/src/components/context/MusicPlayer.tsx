@@ -1,5 +1,6 @@
 import { Volume2, VolumeX, Music } from 'lucide-react';
 import { useMusic } from './MusicContext';
+import { apiService } from '../../services/api';
 
 export default function MusicPlayer() {
   const { isMuted, currentType, toggleMute, fetchAndPlayMusic } = useMusic();
