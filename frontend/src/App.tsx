@@ -1,35 +1,45 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+//TODO Pomodoro Page --- Stress Page --- below
+//import HomePage from './pages/HomePage'
+//import PomodoroPage from './pages/PomodoroPage'
 import './App.css'
+import Layout from './components/Layout/Layout';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState(
+		window.location.hash === '#/pomodoro' ? 'pomodoro' :
+		window.location.hash === '#/stress' ? 'stress' :
+		'home'
+	);
 
+  useEffect(() => {
+    const handleHashChange = () => {
+			const hash = window.location.hash;
+			if (hash === '#/pomodoro') {
+				setCurrentPage('pomodoro');
+			} else if (hash === '#/stress') {
+				setCurrentPage('stress');
+			} else {
+				setCurrentPage('home');
+			}
+		};
+
+    window.addEventListener('hashchange', handleHashChange);
+		return () => window.removeEventListener('hashchange', handleHashChange);
+
+  }, []);
+  
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    // temporary layout structure
+    <Layout> 
+      {currentPage === 'home' && <div>Home Page Component</div>}
+      {currentPage === 'pomodoro' && <div>Pomodoro Page Component</div>}
+      {currentPage === 'stress' && <div>Stress Page Component</div>}  
+    </Layout>
+  );
+
 }
 
-export default App
+export default App;
