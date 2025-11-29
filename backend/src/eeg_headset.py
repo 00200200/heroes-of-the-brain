@@ -1,37 +1,36 @@
-"""EEG Headset interface for BrainAccess MINI 049.
+"""BrainAccess BA MINI 049 EEG headset interface.
 
-This module handles connection and data acquisition from the BrainAccess
-MINI 049 4-channel headset with robust error handling and data buffering.
+Handles connection, configuration, and real-time data acquisition from
+the 4-channel EEG headset with accelerometer support.
 """
 
 import os
+import threading
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
 from eeg_config import DATA_FOLDER_PATH, DEVICE_NAME, NUM_CHANNELS, SAMPLING_RATE, USED_DEVICE
 
-# --- HARDWARE IMPORTS SECTION ---
-BRAINACCESS_AVAILABLE = False
+# --- HARDWARE IMPORTS ---
 try:
-    from brainaccess.utils import acquisition
     from brainaccess.core.eeg_manager import EEGManager
     import brainaccess.core as bacore
+    import brainaccess.core.eeg_channel as eeg_channel
+    from brainaccess.core.gain_mode import GainMode
     BRAINACCESS_AVAILABLE = True
-except Exception as e:
-    # brainaccess requires libbacore.so native library
-    # This is expected to fail on systems without the hardware drivers
-    print(f"[INFO] BrainAccess library not available: {e}")
-    print("[INFO] This is expected if libbacore.so (hardware driver) is not installed")
+except ImportError as e:
+    print(f"[WARNING] BrainAccess not available: {e}")
+    BRAINACCESS_AVAILABLE = False
 
 
 class EEGHeadset:
-    """Handle connection and data acquisition from BrainAccess MINI 049 4-channel headset."""
+    """Handle connection and data acquisition from BrainAccess MINI 049 headset."""
 
     def __init__(self, participant_id: str = "test_user") -> None:
-        """Initialize the EEG headset interface.
-
+        """Initialize EEG headset interface.
+        
         Args:
             participant_id: ID to use as folder name for saved data.
         """
@@ -39,87 +38,137 @@ class EEGHeadset:
         self._is_recording: bool = False
         self._participant_id: str = participant_id
         self._save_dir_path: str = os.path.join(DATA_FOLDER_PATH, participant_id)
-        self._connection_attempts: int = 0
-        self._max_attempts: int = 3
-        self._buffer: List[np.ndarray] = []
-        self._annotations: List[Dict[str, Any]] = []
-        self._eeg_manager: Optional[Any] = None
-        self._eeg_acquisition: Optional[Any] = None
+        self._eeg_manager: Optional[EEGManager] = None
+        self._device_name: Optional[str] = None
         self._recording_start_time: float = 0
+        self._latest_chunk: Optional[np.ndarray] = None
+        self._latest_accel: List[float] = [0.0, 0.0, 0.0]
+        self._accel_start_idx: int = 0  # Will be set during connect()
+        self._chunk_mutex = threading.Lock()
+        self._annotations: List[Dict[str, Any]] = []
+        self._brainaccess_available: bool = BRAINACCESS_AVAILABLE
 
-        if BRAINACCESS_AVAILABLE:
+        if self._brainaccess_available:
             try:
-                print("Initializing BrainAccess library...")
-                bacore.init(bacore.Version(2, 0, 0))
-                print("BrainAccess library initialized successfully")
+                print("Initializing BrainAccess core...")
+                bacore.init()
+                print("BrainAccess core initialized successfully")
             except Exception as e:
-                print(f"Warning: Could not initialize BrainAccess: {e}")
-                BRAINACCESS_AVAILABLE = False
+                print(f"[ERROR] Failed to initialize BrainAccess: {e}")
+                self._brainaccess_available = False
         else:
-            print("BrainAccess library import failed - check dependencies")
+            print("[ERROR] BrainAccess library not available - check dependencies")
 
-        # Create directories for data storage
         self._create_dir_if_not_exist(DATA_FOLDER_PATH)
         self._create_dir_if_not_exist(self._save_dir_path)
 
     def connect(self) -> bool:
-        """Connect to the BrainAccess MINI 049 headset over Bluetooth.
-
+        """Connect to BA MINI 049 headset over Bluetooth.
+        
         Returns:
-            True if connection was successful, False otherwise.
+            True if connected, False otherwise.
         """
         if self._is_connected:
-            print("Already connected to the headset.")
+            print("Already connected to headset")
             return True
 
-        if not BRAINACCESS_AVAILABLE:
-            print("BrainAccess library not available.")
+        if not self._brainaccess_available:
+            print("[ERROR] BrainAccess library not available")
             return False
 
-        print(f"Attempting to connect to {DEVICE_NAME} over Bluetooth...")
+        try:
+            print(f"[INFO] Scanning for devices...")
+            devices = bacore.scan()
+            print(f"[INFO] Found {len(devices)} device(s)")
 
-        while self._connection_attempts < self._max_attempts:
-            try:
-                # Create EEG manager and acquisition objects
-                self._eeg_manager = EEGManager()
-                self._eeg_acquisition = acquisition.EEG()
+            # Find target device
+            device_found = None
+            for device in devices:
+                print(f"  - {device.name}")
+                if DEVICE_NAME in device.name:
+                    device_found = device.name
+                    break
 
-                # Setup EEG acquisition with BA MINI 049 device
-                # The cap parameter maps channel indices to electrode names
-                self._eeg_acquisition.setup(
-                    self._eeg_manager,
-                    device_name=DEVICE_NAME,
-                    cap=USED_DEVICE,
-                    sfreq=SAMPLING_RATE,
+            if not device_found:
+                print(f"[ERROR] Device '{DEVICE_NAME}' not found")
+                return False
+
+            self._device_name = device_found
+            print(f"[INFO] Connecting to: {self._device_name}")
+
+            # Create manager and connect
+            self._eeg_manager = EEGManager()
+            status = self._eeg_manager.connect(self._device_name)
+
+            if status == 1:
+                print("[ERROR] Connection failed (status=1)")
+                return False
+            elif status == 2:
+                print("[ERROR] Stream incompatible - update firmware (status=2)")
+                return False
+            elif status != 0:
+                print(f"[ERROR] Connection returned unexpected status: {status}")
+                return False
+
+            print(f"[INFO] Successfully connected to {self._device_name}")
+
+            # Get device info
+            battery_info = self._eeg_manager.get_battery_info()
+            print(f"[INFO] Battery: {battery_info.level}%")
+
+            device_features = self._eeg_manager.get_device_features()
+            eeg_channels_number = device_features.electrode_count()
+            print(f"[INFO] Device has {eeg_channels_number} EEG channels")
+
+            # Configure EEG channels (start from channel 3)
+            print("[INFO] Configuring EEG channels...")
+            ch_nr = 0
+            for i in range(3, eeg_channels_number):
+                self._eeg_manager.set_channel_enabled(
+                    eeg_channel.ELECTRODE_MEASUREMENT + i, True
                 )
-
-                # Check connection
-                if self._eeg_manager.is_connected():
-                    self._is_connected = True
-                    print(f"Successfully connected to {DEVICE_NAME}!")
-                    print(f"Sampling rate: {SAMPLING_RATE} Hz")
-                    print(f"Channels: {list(USED_DEVICE.values())}")
-                    return True
-
-            except Exception as e:
-                self._connection_attempts += 1
-                print(
-                    f"Connection attempt {self._connection_attempts} failed: {str(e)}"
+                ch_nr += 1
+                self._eeg_manager.set_channel_gain(
+                    eeg_channel.ELECTRODE_MEASUREMENT + i, GainMode.X8
                 )
-                print(f"Retrying in {self._connection_attempts} seconds...")
-                time.sleep(self._connection_attempts)
+            self._eeg_manager.set_channel_bias(eeg_channel.ELECTRODE_MEASUREMENT + i, True)
 
-        print(f"Failed to connect to {DEVICE_NAME} after multiple attempts.")
-        print("Please check that:")
-        print("1. The device is turned on and charged")
-        print("2. The device is paired via Bluetooth")
-        print("3. The device name is correct (currently: {})".format(DEVICE_NAME))
-        return False
+            # Configure accelerometer if available
+            has_accel = device_features.has_accel()
+            accel_start_idx = ch_nr  # Save accel start index
+            if has_accel:
+                print("[INFO] Enabling accelerometer...")
+                self._eeg_manager.set_channel_enabled(eeg_channel.ACCELEROMETER, True)
+                ch_nr += 1
+                self._eeg_manager.set_channel_enabled(eeg_channel.ACCELEROMETER + 1, True)
+                ch_nr += 1
+                self._eeg_manager.set_channel_enabled(eeg_channel.ACCELEROMETER + 2, True)
+                ch_nr += 1
+
+            # Enable sample number channel
+            self._eeg_manager.set_channel_enabled(eeg_channel.SAMPLE_NUMBER, True)
+            ch_nr += 1
+            
+            # Store accel index for later use in callback
+            self._accel_start_idx = accel_start_idx
+
+            # Get sample rate
+            sr = self._eeg_manager.get_sample_frequency()
+            print(f"[INFO] Sample frequency: {sr} Hz")
+
+            self._is_connected = True
+            return True
+
+        except Exception as e:
+            print(f"[ERROR] Connection error: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
 
     def disconnect(self) -> None:
-        """Disconnect from the BrainAccess MINI 049 headset."""
+        """Disconnect from headset."""
         if not self._is_connected:
-            print("Not connected to any headset.")
+            print("Not connected")
             return
 
         if self._is_recording:
@@ -129,148 +178,164 @@ class EEGHeadset:
             if self._eeg_manager:
                 self._eeg_manager.disconnect()
             self._is_connected = False
-            print(f"Disconnected from {DEVICE_NAME}.")
+            print(f"[INFO] Disconnected from {self._device_name}")
         except Exception as e:
-            print(f"Error disconnecting from the headset: {str(e)}")
+            print(f"[ERROR] Disconnect error: {e}")
 
     def start_recording(self, session_name: str = "default_session") -> bool:
         """Start recording EEG data.
-
+        
         Args:
-            session_name: Name of the recording session.
-
+            session_name: Name of recording session.
+            
         Returns:
-            True if recording started successfully, False otherwise.
+            True if started, False otherwise.
         """
         if not self._is_connected:
             if not self.connect():
-                print("Cannot start recording: Failed to connect to the headset.")
+                print("[ERROR] Cannot start recording - connection failed")
                 return False
 
         if self._is_recording:
-            print("Already recording data.")
+            print("Already recording")
             return True
 
         try:
-            print("Starting EEG data acquisition...")
-            if self._eeg_acquisition:
-                self._eeg_acquisition.start_acquisition()
+            print("[INFO] Starting EEG acquisition...")
+
+            # Define data callback - store latest chunk for retrieval
+            def acq_callback(chunk, chunk_size):
+                """Callback for incoming data chunks."""
+                try:
+                    # Convert list to numpy array if needed
+                    if isinstance(chunk, list):
+                        chunk_array = np.array(chunk)
+                    else:
+                        chunk_array = chunk
+                    
+                    with self._chunk_mutex:
+                        # Store only EEG channels
+                        if chunk_array.shape[0] > NUM_CHANNELS:
+                            self._latest_chunk = chunk_array[:NUM_CHANNELS, :].copy()
+                            
+                            # Extract accelerometer using stored index
+                            # Accel is at indices [_accel_start_idx, _accel_start_idx+1, _accel_start_idx+2]
+                            if chunk_array.shape[0] > self._accel_start_idx + 2:
+                                accel_x = float(np.mean(chunk_array[self._accel_start_idx, :]))
+                                accel_y = float(np.mean(chunk_array[self._accel_start_idx + 1, :]))
+                                accel_z = float(np.mean(chunk_array[self._accel_start_idx + 2, :]))
+                                self._latest_accel = [accel_x, accel_y, accel_z]
+                        else:
+                            self._latest_chunk = chunk_array.copy()
+                except Exception as e:
+                    print(f"[ERROR] Callback error: {e}")
+
+            if self._eeg_manager:
+                self._eeg_manager.set_callback_chunk(acq_callback)
+                self._eeg_manager.load_config()
+                self._eeg_manager.start_stream()
+
             self._is_recording = True
             self._session_name = session_name
             self._recording_start_time = time.time()
 
-            self.annotate_event(f"Session started: {session_name}")
-
-            print(f"Recording started for session: {session_name}")
+            print(f"[INFO] Recording started: {session_name}")
             return True
+
         except Exception as e:
-            print(f"Error starting recording: {str(e)}")
+            print(f"[ERROR] Start recording error: {e}")
+            import traceback
+            traceback.print_exc()
             return False
 
     def stop_recording(self) -> bool:
-        """Stop recording and save the data.
-
+        """Stop recording and save data.
+        
         Returns:
-            True if data was saved successfully, False otherwise.
+            True if saved, False otherwise.
         """
         if not self._is_recording:
-            print("No active recording to stop.")
+            print("No active recording")
             return False
 
         try:
-            self.annotate_event("Session ended")
-
-            if self._eeg_acquisition:
-                print("Processing recorded data...")
-                mne_raw = self._eeg_acquisition.get_mne()
-
-                file_path = os.path.join(
-                    self._save_dir_path,
-                    f"{self._participant_id}_{self._session_name}_{int(self._recording_start_time)}_raw.fif",
-                )
-                print(f"Saving EEG data to {file_path}")
-                if mne_raw and hasattr(mne_raw, "save"):
-                    mne_raw.save(file_path)
-
-                self._eeg_acquisition.stop_acquisition()
-
-                if self._eeg_manager:
-                    self._eeg_manager.clear_annotations()
+            if self._eeg_manager:
+                print("[INFO] Stopping stream...")
+                self._eeg_manager.stop_stream()
+                time.sleep(0.5)
 
             self._is_recording = False
-
-            print("Recording stopped and data saved successfully.")
+            print("[INFO] Recording stopped")
             return True
+
         except Exception as e:
-            print(f"Error stopping recording: {str(e)}")
+            print(f"[ERROR] Stop recording error: {e}")
+            self._is_recording = False
             return False
 
     def annotate_event(self, annotation: str) -> None:
-        """Add an annotation to the EEG data.
-
+        """Add annotation to EEG data.
+        
         Args:
-            annotation: Annotation text to add.
+            annotation: Annotation text.
         """
         if not self._is_connected:
-            print("Cannot annotate: Not connected to the headset.")
+            print("Not connected - cannot annotate")
             return
 
         try:
             timestamp = (
                 time.time() - self._recording_start_time if self._is_recording else 0
             )
-            if self._eeg_acquisition:
-                self._eeg_acquisition.annotate(annotation)
+            # Just store annotation locally (BrainAccess doesn't support add_annotation)
             self._annotations.append({"timestamp": timestamp, "annotation": annotation})
-            print(f"Annotation added: '{annotation}' at {timestamp:.2f}s")
+            print(f"[INFO] Annotation: '{annotation}' at {timestamp:.2f}s")
         except Exception as e:
-            print(f"Error adding annotation: {str(e)}")
-
-    def get_channel_names(self) -> List[str]:
-        """Get the names of the EEG channels.
-
-        Returns:
-            List of channel names.
-        """
-        return list(USED_DEVICE.keys())
+            print(f"[ERROR] Annotation error: {e}")
 
     def get_current_data(self, duration_seconds: float = 1.0) -> np.ndarray:
-        """Get the most recent EEG data.
-
+        """Get most recent buffered EEG data.
+        
         Args:
-            duration_seconds: Amount of data to return in seconds.
-
+            duration_seconds: Duration to retrieve (ignored, returns latest chunk).
+            
         Returns:
-            Array of EEG data with shape (channels, samples).
+            Array of shape (NUM_CHANNELS, num_samples).
         """
         if not self._is_recording:
-            print("Cannot get data: Not currently recording.")
+            print("[WARNING] Not recording - returning zero buffer")
             return np.zeros((NUM_CHANNELS, int(duration_seconds * SAMPLING_RATE)))
 
         try:
-            if not self._eeg_acquisition:
-                return np.zeros((NUM_CHANNELS, int(duration_seconds * SAMPLING_RATE)))
-
-            mne_raw_latest = self._eeg_acquisition.get_mne(
-                tim=duration_seconds, annotations=False
-            )
-
-            if mne_raw_latest and hasattr(mne_raw_latest, "get_data"):
-                data = mne_raw_latest.get_data()
-                return data
-            else:
-                return np.zeros((NUM_CHANNELS, int(duration_seconds * SAMPLING_RATE)))
-
+            with self._chunk_mutex:
+                if self._latest_chunk is not None:
+                    return self._latest_chunk.copy()
+                else:
+                    return np.zeros((NUM_CHANNELS, int(duration_seconds * SAMPLING_RATE)))
         except Exception as e:
-            print(f"Error getting current data: {str(e)}")
+            print(f"[ERROR] Get data error: {e}")
             return np.zeros((NUM_CHANNELS, int(duration_seconds * SAMPLING_RATE)))
 
-    def _create_dir_if_not_exist(self, path: str) -> None:
-        """Create a directory if it does not exist.
+    def get_accelerometer(self) -> List[float]:
+        """Get most recent accelerometer data.
+        
+        Returns:
+            List of [accel_x, accel_y, accel_z] values.
+        """
+        try:
+            with self._chunk_mutex:
+                return self._latest_accel.copy()
+        except Exception as e:
+            print(f"[ERROR] Get accel error: {e}")
+            return [0.0, 0.0, 0.0]
 
+    def _create_dir_if_not_exist(self, path: str) -> None:
+        """Create directory if needed.
+        
         Args:
-            path: Directory path to create.
+            path: Directory path.
         """
         if not os.path.exists(path):
             os.makedirs(path)
-            print(f"Created directory: {path}")
+            print(f"[INFO] Created directory: {path}")
+

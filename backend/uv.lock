@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -39,17 +39,20 @@ wheels = [
 
 [[package]]
 name = "brainaccess"
-version = "2.3.0"
-source = { git = "https://github.com/KN-Neuron/brainaccess-python-api.git#4e5a621d3b974528ca7d62cfa93d405d20ada716" }
+version = "3.6.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "matplotlib" },
     { name = "mne" },
     { name = "multimethod" },
     { name = "numpy" },
     { name = "pandas" },
-    { name = "pillow" },
-    { name = "pysimplegui" },
     { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8a/df/3622f7d39d088e2f75ebe5903a3546668340a6be19acb432353118f3b172/brainaccess-3.6.1.tar.gz", hash = "sha256:1e8b5f219ebe579f3a1233e895bfeeeb4ed9b419463d83292be8629f0f817111", size = 38216, upload-time = "2025-11-21T19:05:43.608Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/01/4d/d4d8b28c773ccf0569ac57a30effa511589cecc54cb72f2e8b1f14d13770/brainaccess-3.6.1-py3-none-manylinux_2_35_x86_64.whl", hash = "sha256:efee79c300ed27dd88a5038946eb409ec53113f440ee3efa417dd7acf6f43dd5", size = 14278224, upload-time = "2025-11-21T19:05:39.62Z" },
+    { url = "https://files.pythonhosted.org/packages/bd/14/f01f9af1cc35224ddcb90772ea386990a0891910f3ae2cf7302b0dcf0c69/brainaccess-3.6.1-py3-none-win_amd64.whl", hash = "sha256:490890c0af0123dc6ddce4f3396268e85a04c3596daec227f933e5328bc13afa", size = 350555, upload-time = "2025-11-21T19:05:42.146Z" },
 ]
 
 [[package]]
@@ -353,7 +356,7 @@ server = [
 
 [package.metadata]
 requires-dist = [
-    { name = "brainaccess", git = "https://github.com/KN-Neuron/brainaccess-python-api.git" },
+    { name = "brainaccess" },
     { name = "fastapi", specifier = ">=0.122.0" },
     { name = "fastapi", marker = "extra == 'server'", specifier = ">=0.122.0" },
     { name = "mne", marker = "extra == 'server'", specifier = ">=1.11.0" },
@@ -1061,15 +1064,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f2/a5/181488fc2b9d093e3972d2a472855aae8a03f000592dbfce716a512b3359/pyparsing-3.2.5.tar.gz", hash = "sha256:2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6", size = 1099274, upload-time = "2025-09-21T04:11:06.277Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/10/5e/1aa9a93198c6b64513c9d7752de7422c06402de6600a8767da1524f9570b/pyparsing-3.2.5-py3-none-any.whl", hash = "sha256:e38a4f02064cf41fe6593d328d0512495ad1f3d8a91c4f73fc401b3079a59a5e", size = 113890, upload-time = "2025-09-21T04:11:04.117Z" },
-]
-
-[[package]]
-name = "pysimplegui"
-version = "5.0.8.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b8/ee/c7015ee3d5723aec4335608450a5efb96f53953d65d7acd6227b389e905d/pysimplegui-5.0.8.3.tar.gz", hash = "sha256:4c77436f527b6ee5c6e097a07028c83d85dc2513bcb51b78c9bfcc1b55123bd1", size = 15686, upload-time = "2025-04-02T13:25:19.096Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/d9/3de4b7ca71a7779e4f4a160088621b072a29d9b814a7fa9b5411571f4849/pysimplegui-5.0.8.3-py3-none-any.whl", hash = "sha256:67e35ad6dd76e9369051261114f4711308e87815a0488f7fa28b37c29a546f8b", size = 16347, upload-time = "2025-04-02T13:25:17.973Z" },
 ]
 
 [[package]]

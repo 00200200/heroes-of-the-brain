@@ -7,8 +7,8 @@ including sampling rate, number of channels, device setup, and data storage path
 import os
 
 # --- SAMPLING & ACQUISITION ---
-SAMPLING_RATE: int = 1000  # Hz (samples per second) - BA MINI 049 native rate
-NUM_CHANNELS: int = 4  # Number of EEG channels (BA MINI 049 has 4 channels)
+SAMPLING_RATE: int = 1000  # Hz (samples per second) - native rate
+NUM_CHANNELS: int = 8  # Number of EEG channels
 NUM_ACCEL_CHANNELS: int = 3  # Accelerometer channels (X, Y, Z)
 PACKET_SIZE: int = 256  # Samples per packet
 PACKETS_PER_SECOND: int = 8  # Packets per second (8 * 256 = 2048 Hz effective, resampled from 1000 Hz)
@@ -17,16 +17,20 @@ PACKETS_PER_SECOND: int = 8  # Packets per second (8 * 256 = 2048 Hz effective, 
 DATA_FOLDER_PATH: str = os.path.join(os.path.dirname(__file__), "..", "data", "eeg_recordings")
 
 # --- HARDWARE CONNECTION ---
-DEVICE_NAME: str = "BA MINI 049"  # BrainAccess MINI device name
+DEVICE_NAME: str = "BA MINI 049"  # BrainAccess device name
 PORT: str = "COM3"  # Serial port (adjust for your system: /dev/ttyUSB0 on Linux, COM3 on Windows)
 
 # --- CHANNEL MAPPING ---
-# 4 channels: Fp1, Fp2, O1, O2 (standard placement for BA MINI 049)
+# 8 channels
 USED_DEVICE: dict = {
-    0: "Fp1",
-    1: "Fp2",
-    2: "O1",
-    3: "O2",
+    0: "Ch0",
+    1: "Ch1",
+    2: "Ch2",
+    3: "Ch3",
+    4: "Ch4",
+    5: "Ch5",
+    6: "Ch6",
+    7: "Ch7",
 }
 
 # --- ACCELEROMETER ---
