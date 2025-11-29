@@ -14,6 +14,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "fastapi>=0.122.0",
     "pydantic>=2.12.5",
+    "uvicorn>=0.38.0",
 ]
 
 # Dependencies for Docker Backend (Server only)

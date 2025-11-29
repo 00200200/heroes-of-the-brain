@@ -46,26 +46,7 @@ class MetricsResponse(BaseModel):
     tiredness_level: int
 
 
-@router.post("/ingest")
-async def ingest_data(data: EEGInput):
-    """Ingest EEG data and update all metric models.
 
-    The endpoint updates each model singleton in-place. It does not
-    return computed metrics; instead, the `/current` endpoint exposes the
-    latest values.
-
-    Args:
-        data: EEGInput Pydantic object with `alpha_waves` and
-            `beta_waves` lists.
-
-    Returns:
-        dict: Simple status response indicating the update succeeded.
-    """
-    # Each model consumes the inputs it needs
-    stress_service.calculate(data.alpha_waves, data.beta_waves)
-    focus_service.calculate(data.beta_waves)
-    tiredness_service.calculate(data.alpha_waves)
-    return {"status": "updated"}
 
 
 @router.get("/current", response_model=MetricsResponse)
