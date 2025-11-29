@@ -14,7 +14,8 @@ from src.models.stress_model import stress_service
 from src.models.focus_model import focus_service
 from src.models.tiredness_model import tiredness_service
 from src.models.music_model import music_service
-from src.models import update_models_from_latest_csv
+from src.models import update_models_from_latest_csv, mean_metrics
+from fastapi import HTTPException
 
 router = APIRouter()
 
@@ -33,6 +34,21 @@ class MetricsResponse(BaseModel):
     tiredness_level: int
     timestamp: str
 
+@router.get("/mean_metrics")
+async def get_mean_metrics():
+    """Zwraca uśrednione metryki z ostatnich 2 minut (bufor EEG)."""
+    import datetime as dt
+    result = mean_metrics()
+    if result is None:
+        raise HTTPException(status_code=404, detail="Brak danych w buforze")
+    # Zamień timestamp na ISO
+    ts_str = dt.datetime.fromtimestamp(result["timestamp"]).isoformat()
+    return {
+        "timestamp": ts_str,
+        "focus_level": result["focus_level"],
+        "stress_level": result["stress_level"],
+        "tiredness_level": result["tiredness_level"],
+    }
 
 @router.get("/current", response_model=MetricsResponse)
 async def get_current():
@@ -43,13 +59,19 @@ async def get_current():
     """
     # Zawsze aktualizuj modele na podstawie najnowszego pliku CSV
     import logging
-    update_models_from_latest_csv()
+    import datetime as dt
+    
+    mean_ts = update_models_from_latest_csv()
     stress = stress_service.get_value()
     focus = focus_service.get_value()
     tiredness = tiredness_service.get_value()
-    logging.info(f"Zwracane metryki: stress={stress}, focus={focus}, tiredness={tiredness}")
+    if mean_ts is not None:
+        ts_str = dt.datetime.fromtimestamp(mean_ts).isoformat()
+    else:
+        ts_str = dt.datetime.now().isoformat()
+    logging.info(f"Zwracane metryki: stress={stress}, focus={focus}, tiredness={tiredness}, timestamp={ts_str}")
     return {
-        "timestamp": datetime.now().strftime("%H:%M"),
+        "timestamp": ts_str,
         "stress_level": stress,
         "focus_level": focus,
         "tiredness_level": tiredness,
