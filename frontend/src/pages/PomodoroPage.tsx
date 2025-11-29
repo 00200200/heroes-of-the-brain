@@ -288,12 +288,6 @@ export default function PomodoroPage() {
         </ul>
       </div>
 
-      {/* Future Integration Note */}
-      <div className="mt-4 bg-gray-900/40 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-        <p className="text-xs text-gray-500 text-center">
-          <span className="text-cyan-400 font-semibold">Wkrótce:</span> Pełna integracja z monitoringiem EEG i biometrycznym dla precyzyjnego dostosowania
-        </p>
-      </div>
     </div>
   );
 }
