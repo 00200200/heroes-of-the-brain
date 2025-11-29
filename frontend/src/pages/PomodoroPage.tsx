@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw, Coffee, Briefcase, Brain, Zap } from 'lucide-react';
 import treeGif from '../assets/tree.gif';
+import BiofeedbackChart from '../components/BiofeedbackChart';
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
@@ -150,6 +151,9 @@ export default function PomodoroPage() {
       
       {/* Content wrapper */}
       <div className="relative z-10">
+  <div>
+    <BiofeedbackChart />
+    <div className="w-full max-w-xl lg:max-w-2xl mx-auto px-4 mt-8">
       {/* Header */}
       <div className="text-center mb-6 md:mb-10 lg:mb-12">
         <div className="flex items-center justify-center gap-2 md:gap-3 mb-2 md:mb-3">
@@ -266,5 +270,8 @@ export default function PomodoroPage() {
       
       </div>
     </div>
+
+    </div>
+  </div>
   );
 }

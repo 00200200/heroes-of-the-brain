@@ -1,5 +1,6 @@
 import { Play, Square, RefreshCcw, Zap, Trophy, Timer } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import BiofeedbackChart from '../components/BiofeedbackChart';
 
 // Konfiguracja kolorów gry
 const COLORS = [
@@ -104,6 +105,8 @@ export default function ConcentrationDrill() {
 
 
   return (
+  <div>
+    <BiofeedbackChart />
     <div className="flex flex-col items-center justify-center min-h-[550px] w-full bg-indigo-50 p-6 rounded-3xl select-none">
       {/* Nagłówek */}
       <div className="text-center mb-8">
@@ -203,5 +206,6 @@ export default function ConcentrationDrill() {
       
       <p className="mt-4 text-xs text-indigo-400">Press SPACE</p>
     </div>
+  </div>
   );
 }

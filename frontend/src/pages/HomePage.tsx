@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
-import stressRedGif from '../assets/sky_violet.gif';
+
+import stressRedGif from '../assets/windy-tree.gif';
 import solvroCat from '../assets/solvro_cat.gif';
-import tomatoGif from '../assets/tomato.gif';
-import concentrationGif from '../assets/concentration.gif';
+import pomodoroGif from '../assets/duck.gif';
+import concentrationGif from '../assets/flying_monster.gif';
+
 import BiofeedbackChart from '../components/BiofeedbackChart';
 
 export default function HomePage() {
@@ -53,7 +55,7 @@ export default function HomePage() {
 			color: '#10b981',
 			path: '/pomodoro',
 			status: 'active',
-			background: tomatoGif,
+			background: pomodoroGif,
 		},
 
 		{
@@ -62,6 +64,8 @@ export default function HomePage() {
 			description: 'Ćwiczenia poprawiające twoją zdolność skupienia uwagi',
 			color: '#f59e0b',
 			path: '/concentration',
+			status: 'active',
+			background: concentrationGif,
 			status: 'active',
 			background: concentrationGif,
 		}
