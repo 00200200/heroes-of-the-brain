@@ -84,14 +84,14 @@ export default function OpacityBiofeedbackChart() {
     }
 
     return (
-        <div className={'font-mono w-full bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-gray-800 shadow-2xl'}>
+        <div className={'font-mono w-full bg-white/5 backdrop-blur-lg p-6 rounded-3xl border border-gray-800 shadow-2xl'}>
             <div className='flex justify-between items-center mb-6'>
                 <div>
                     <h3 className='text-xl font-bold text-white'>Biofeedback Trends</h3>
                     <p className='text-gray-500 text-sm ml-10'>Live analysis ({data.length} data points)</p>
                 </div>
 
-                <div className='px-3 py-1 bg-gray-900 border border-gray-700 rounded-lg text-xs text-gray-400'>Live</div>
+                <div className='px-3 py-1 backdrop-blur-lg bg-gray-400 border-gray-700 rounded-lg text-xs text-white'>Live</div>
             </div>
 
             <div className='h-[300px] w-full'>

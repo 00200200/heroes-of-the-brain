@@ -178,7 +178,7 @@ export default function PomodoroPage() {
       </div>
 
       {/* Main Timer Display */}
-      <div className="bg-white/5 backdrop-blur-md rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-10 lg:p-12 border-2 border-white/20 mb-4 md:mb-6 lg:mb-8">
+      <div className="bg-white/5 backdrop-blur-lg rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-10 lg:p-12 border-2 border-white/20 mb-4 md:mb-6 lg:mb-8">
         <div className="text-center">
           {/* Mode Title */}
           <div className="flex items-center justify-center mb-3 sm:mb-4 md:mb-6">
@@ -254,7 +254,7 @@ export default function PomodoroPage() {
       </div>
 
       {/* Pomodoro Counter */}
-      <div className="bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border-2 border-white/20 text-center">
+      <div className="bg-white/5 backdrop-blur-lg rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border-2 border-white/20 text-center">
         <h4 className="text-sm sm:text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Ukończone Pomodoro</h4>
         <div className="flex justify-center gap-1.5 sm:gap-2">
           {[...Array(completedPomodoros % 4 || (completedPomodoros > 0 ? 4 : 0))].map((_, i) => (
