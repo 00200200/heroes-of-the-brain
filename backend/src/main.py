@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 # Import the API router created in the project
 from src.api.mental_metric_routes import router as metrics_router
 
-
 app = FastAPI(title="heroes-of-the-brain - backend")
 
 app.add_middleware(

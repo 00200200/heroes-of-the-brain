@@ -4,18 +4,18 @@ This module exposes an endpoint to retrieve the current computed metrics
 for stress, focus, and tiredness.
 """
 
-from fastapi import APIRouter
-from pydantic import BaseModel
-from typing import List
 from datetime import datetime, timedelta
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+
+from src.models import mean_metrics, update_models_from_latest_csv
+from src.models.focus_model import focus_service
+from src.models.music_model import music_service
 
 # Import singleton model instances
 from src.models.stress_model import stress_service
-from src.models.focus_model import focus_service
 from src.models.tiredness_model import tiredness_service
-from src.models.music_model import music_service
-from src.models import update_models_from_latest_csv, mean_metrics
-from fastapi import HTTPException
 
 router = APIRouter()
 
@@ -27,6 +27,7 @@ class MetricsResponse(BaseModel):
         stress_level: Stress level (0-100).
         focus_level: Focus level (0-100).
         tiredness_level: Tiredness level (0-100).
+
     """
 
     stress_level: int
@@ -36,13 +37,26 @@ class MetricsResponse(BaseModel):
 
 @router.get("/mean_metrics")
 async def get_mean_metrics():
-    """Zwraca uśrednione metryki z ostatnich 2 minut (bufor EEG)."""
+    """Return mean metrics averaged over the last 2 minutes (EEG buffer).
+
+    Returns:
+        dict: Averaged focus, stress, tiredness, and timestamp in ISO format.
+
+    Raises:
+        HTTPException: If no data is available in the buffer.
+
+    """
     import datetime as dt
+    import logging
     result = mean_metrics()
     if result is None:
+        logging.getLogger(__name__).warning("No data in EEG buffer for mean_metrics endpoint.")
         raise HTTPException(status_code=404, detail="Brak danych w buforze")
-    # Zamień timestamp na ISO
     ts_str = dt.datetime.fromtimestamp(result["timestamp"]).isoformat()
+    logging.getLogger(__name__).info(
+        "Returned mean_metrics: focus=%d, stress=%d, tiredness=%d, timestamp=%s",
+        result["focus_level"], result["stress_level"], result["tiredness_level"], ts_str,
+    )
     return {
         "timestamp": ts_str,
         "focus_level": result["focus_level"],
@@ -56,11 +70,11 @@ async def get_current():
 
     Returns:
         MetricsResponse: Current stress, focus and tiredness levels.
+
     """
-    # Zawsze aktualizuj modele na podstawie najnowszego pliku CSV
-    import logging
     import datetime as dt
-    
+    import logging
+
     mean_ts = update_models_from_latest_csv()
     stress = stress_service.get_value()
     focus = focus_service.get_value()
@@ -69,7 +83,10 @@ async def get_current():
         ts_str = dt.datetime.fromtimestamp(mean_ts).isoformat()
     else:
         ts_str = dt.datetime.now().isoformat()
-    logging.info(f"Zwracane metryki: stress={stress}, focus={focus}, tiredness={tiredness}, timestamp={ts_str}")
+    logging.getLogger(__name__).info(
+        "Returned metrics: stress=%d, focus=%d, tiredness=%d, timestamp=%s",
+        stress, focus, tiredness, ts_str,
+    )
     return {
         "timestamp": ts_str,
         "stress_level": stress,
@@ -80,6 +97,12 @@ async def get_current():
 
 @router.get("/music")
 async def get_music():
+    """Return the recommended music type based on current metrics.
+
+    Returns:
+        dict: Recommended music type.
+
+    """
     recommended_type = music_service.get_value()
     if recommended_type == "none":
         recommended_type = "focus"
@@ -88,12 +111,19 @@ async def get_music():
     }
 
 
-@router.get("/history", response_model=List[MetricsResponse])
+@router.get("/history", response_model=list[MetricsResponse])
 async def get_history(limit: int = 10):
+    """Return a list of historical metrics (mock data).
 
+    Args:
+        limit (int): Number of data points to return.
+
+    Returns:
+        list[MetricsResponse]: List of historical metrics.
+
+    """
     now = datetime.now()
     data_points = []
-
     for i in range(limit - 1, -1, -1):
         time_point = now - timedelta(minutes=i)
         data_points.append(
@@ -102,7 +132,6 @@ async def get_history(limit: int = 10):
                 "stress_level": 30 + (i % 5) * 10,
                 "focus_level": 65 - (i % 3) * 5,
                 "tiredness_level": 20 + (i % 4) * 8,
-            }
+            },
         )
-
     return data_points

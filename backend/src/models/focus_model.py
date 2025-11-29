@@ -5,8 +5,8 @@ The model averages the provided beta wave values and scales them to an
 integer in the 0-100 range.
 """
 
+
 import numpy as np
-from typing import List
 
 
 class FocusModel:
@@ -14,12 +14,13 @@ class FocusModel:
 
     Attributes:
         _level (int): Cached focus level in the range 0-100.
+
     """
 
     def __init__(self):
         self._level = 0
 
-    def calculate(self, beta: List[float]) -> None:
+    def calculate(self, beta: list[float]) -> None:
         """Calculate and update the focus level.
 
         Args:
@@ -28,6 +29,7 @@ class FocusModel:
 
         Side effects:
             Updates `_level` with an integer between 0 and 100.
+
         """
         # Focus mainly depends on beta waves
         if not beta:
@@ -39,6 +41,7 @@ class FocusModel:
 
         Returns:
             int: Focus level scaled 0-100.
+
         """
         return self._level
 
