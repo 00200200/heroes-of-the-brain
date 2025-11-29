@@ -55,10 +55,12 @@ async def get_current():
 
 
 @router.get("/music")
-async def get_music(music: str):
-    music_service.set_music(music)
+async def get_music():
+    recommended_type = music_service.get_value()
+    if recommended_type == "none":
+        recommended_type = "focus"
     return {
-        "music_type": music_service.get_value(),
+        "music_type": recommended_type,
     }
 
 
