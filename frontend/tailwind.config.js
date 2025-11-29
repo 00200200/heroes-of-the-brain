@@ -4,7 +4,7 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-			 sans: ['"Nunito', 'sans-serif'], },
+			 mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'], },
 		},
 	},
 	plugins: [],

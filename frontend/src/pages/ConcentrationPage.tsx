@@ -105,7 +105,7 @@ export default function ConcentrationDrill() {
 
 
   return (
-  <div>
+  <div className='font-mono'>
     <BiofeedbackChart />
     <div className="flex flex-col items-center justify-center min-h-[550px] w-full bg-indigo-50 p-6 rounded-3xl select-none">
       {/* Nagłówek */}

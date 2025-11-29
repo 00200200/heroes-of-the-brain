@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw, Coffee, Briefcase, Brain, Zap } from 'lucide-react';
 import treeGif from '../assets/tree.gif';
 import BiofeedbackChart from '../components/BiofeedbackChart';
+import OpacityBiofeedbackChart from '../components/OpacityBiofeedbackChart';
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
@@ -151,8 +152,8 @@ export default function PomodoroPage() {
       
       {/* Content wrapper */}
       <div className="relative z-10">
-  <div>
-    <BiofeedbackChart />
+  <div className='font-mono'>
+    <OpacityBiofeedbackChart />
     <div className="w-full max-w-xl lg:max-w-2xl mx-auto px-4 mt-8">
       {/* Header */}
       <div className="text-center mb-6 md:mb-10 lg:mb-12">

@@ -79,7 +79,7 @@ const currentConfig = PHASE_CONFIG[phase];
 return (
   <div>
     <BiofeedbackChart />
-    <div className="flex flex-col items-center justify-center min-h-[500px] w-full bg-green-50 p-6 rounded-3xl">
+    <div className="font-mono flex flex-col items-center justify-center min-h-[500px] w-full bg-green-50 p-6 rounded-3xl">
      {/* Nagłówek */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-green-800 mb-2">Box Breathing</h2>

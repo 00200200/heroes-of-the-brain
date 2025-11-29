@@ -51,23 +51,19 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [isMuted]);
 
-  // Główna funkcja pobierająca typ muzyki z API
   const fetchAndPlayMusic = async () => {
     try {
-      // TUTAJ BĘDZIE TWÓJ PRAWDZIWY FETCH
-      // const response = await fetch('/api/music');
-      // const data = await response.json();
-      // const type = data.type; // np. 'focus'
-
-      // Symulacja API na potrzeby testu:
       const types: MusicType[] = ['focus', 'relax', 'energy', 'deep_relax'];
-      const randomType = types[Math.floor(Math.random() * types.length)];
+      const currentIndex = types.indexOf(currentType);
+      const nextIndex = (currentIndex + 1) % types.length;
       
-      console.log(`Pobrano typ muzyki: ${randomType}`);
-      playTrack(randomType);
+      const nextType = types[nextIndex];
+      
+      console.log(`Przełączono muzykę na: ${nextType}`);
+      playTrack(nextType);
 
     } catch (error) {
-      console.error("Błąd pobierania muzyki:", error);
+      console.error("Błąd zmiany muzyki:", error);
     }
   };
 

@@ -84,11 +84,11 @@ export default function BiofeedbackChart() {
 	}
 
 	return (
-		<div className='w-full bg-gray-950 p-6 rounded-3xl border border-gray-800 shadow-2xl'>
+		<div className={'font-mono w-full bg-gray-950 p-6 rounded-3xl border border-gray-800 shadow-2xl'}>
 			<div className='flex justify-between items-center mb-6'>
 				<div>
 					<h3 className='text-xl font-bold text-white'>Biofeedback Trends</h3>
-					<p className='text-gray-500 text-sm'>Live analysis ({data.length} data points)</p>
+					<p className='text-gray-500 text-sm ml-10'>Live analysis ({data.length} data points)</p>
 				</div>
 
 				<div className='px-3 py-1 bg-gray-900 border border-gray-700 rounded-lg text-xs text-gray-400'>Live</div>

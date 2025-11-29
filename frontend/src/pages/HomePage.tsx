@@ -70,7 +70,7 @@ export default function HomePage() {
 	];
 
 	return (
-		<div>
+		<div className='font-mono'>
 			<div className='mb-12'>
 				<div className='flex items-center gap-3 sm:gap-4 justify-center mb-6'>
 					<h3 className='text-2xl sm:text-3xl md:text-4xl text-center font-medium text-gray-200'>
