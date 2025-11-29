@@ -25,6 +25,7 @@ export default function HomePage() {
 				const data = await apiService.getMentalMetrics();
 				setMetrics(data);
 				setError(null);
+				console.log('Fetched metrics:', data);
 			} catch (err) {
 				console.error('Failed to fetch metrics:', err);
 				setError("Can't fetch data check backend");

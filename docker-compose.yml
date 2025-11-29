@@ -21,6 +21,7 @@ services:
     volumes:
       - ./backend/src:/app/src
       - ./backend/conf:/app/conf
+      - ./backend/BrainAccessData:/app/BrainAccessData
     environment:
       - ENV=development
     healthcheck:

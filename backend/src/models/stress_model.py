@@ -37,7 +37,7 @@ class StressModel:
         if not alpha or not beta:
             return
         ratio = np.mean(beta) / (np.mean(alpha) + 0.01)
-        self._level = min(100, int((ratio / 3.0) * 100))
+        self._level = min(100, abs(int((ratio / 3.0) * 100)))
 
     def get_value(self) -> int:
         """Return the last-computed stress level.

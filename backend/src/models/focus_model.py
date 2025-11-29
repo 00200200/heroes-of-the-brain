@@ -32,7 +32,7 @@ class FocusModel:
         # Focus mainly depends on beta waves
         if not beta:
             return
-        self._level = min(100, int((np.mean(beta) / 50.0) * 100))
+        self._level = min(100, abs(int((np.mean(beta) / 50.0) * 100)))
 
     def get_value(self) -> int:
         """Return the last-computed focus level.

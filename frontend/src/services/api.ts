@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_URL = 'http://localhost:8000/api';
 
 export interface PomodoroRequest {
 	mental_state: 'focused' | 'stressed' | 'tired' | 'relaxed';
@@ -76,7 +76,7 @@ class ApiService {
 		}
 	}
 	async getMentalMetrics(): Promise<MentalMetrics> {
-		const response = await fetch(`${this.baseUrl}/metrics/current`);
+		const response = await fetch(`${this.baseUrl}/current`);
 		if (!response.ok) {
 			throw new Error('Failed to fetch mental metrics');
 		}
@@ -84,7 +84,7 @@ class ApiService {
 	}
 
 	async getMusicRecommendation(): Promise<MusicRecommendationResponse> {
-		const response = await fetch(`${this.baseUrl}/metrics/music`);
+		const response = await fetch(`${this.baseUrl}/music`);
 		if (!response.ok) {
 			throw new Error('Failed to set music');
 		}
@@ -92,7 +92,7 @@ class ApiService {
 	}
 
 	async getMetricsHistory(limit: number = 20): Promise<MentalMetrics[]> {
-		const response = await fetch(`${this.baseUrl}/metrics/history?limit=${limit}`);
+		const response = await fetch(`${this.baseUrl}/history?limit=${limit}`);
 		if (!response.ok) {
 			throw new Error('Failed to fetch metrics history');
 		}

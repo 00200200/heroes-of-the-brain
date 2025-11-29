@@ -46,7 +46,7 @@ class TirednessModel:
             return
         numerator = np.mean(alpha) + np.mean(theta)
         denominator = np.mean(beta) + 0.01  # Small epsilon to avoid division by zero
-        self._level = min(100, int((numerator / denominator / 3.0) * 100))
+        self._level = min(100, abs(int((numerator / denominator / 3.0) * 100)))
 
     def get_value(self) -> int:
         """Return the last-computed tiredness level.

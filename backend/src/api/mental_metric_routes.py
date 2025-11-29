@@ -42,12 +42,17 @@ async def get_current():
         MetricsResponse: Current stress, focus and tiredness levels.
     """
     # Zawsze aktualizuj modele na podstawie najnowszego pliku CSV
+    import logging
     update_models_from_latest_csv()
+    stress = stress_service.get_value()
+    focus = focus_service.get_value()
+    tiredness = tiredness_service.get_value()
+    logging.info(f"Zwracane metryki: stress={stress}, focus={focus}, tiredness={tiredness}")
     return {
         "timestamp": datetime.now().strftime("%H:%M"),
-        "stress_level": stress_service.get_value(),
-        "focus_level": focus_service.get_value(),
-        "tiredness_level": tiredness_service.get_value(),
+        "stress_level": stress,
+        "focus_level": focus,
+        "tiredness_level": tiredness,
     }
 
 
