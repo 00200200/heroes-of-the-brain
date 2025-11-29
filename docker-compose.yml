@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hotb-frontend
+    ports:
+      - "5173:80" # Vite default dev port mapped to nginx
+    depends_on:
+      - backend
+    networks:
+      - hotb-net
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    container_name: hotb-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/conf:/app/conf
+    environment:
+      - ENV=development
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - hotb-net
+networks:
+  hotb-net:
+    driver: bridge

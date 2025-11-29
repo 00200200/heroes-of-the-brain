@@ -14,6 +14,7 @@ from src.models.stress_model import stress_service
 from src.models.focus_model import focus_service
 from src.models.tiredness_model import tiredness_service
 from src.models.music_model import music_service
+from src.models import update_models_from_latest_csv
 
 router = APIRouter()
 
@@ -40,17 +41,13 @@ async def get_current():
     Returns:
         MetricsResponse: Current stress, focus and tiredness levels.
     """
-    # Collect results from three separate model singletons
-    # return {
-    #     "stress_level": stress_service.get_value(),
-    #     "focus_lev3el": focus_service.get_value(),
-    #     "tiredness_level": tiredness_service.get_value(),
-    # }
+    # Zawsze aktualizuj modele na podstawie najnowszego pliku CSV
+    update_models_from_latest_csv()
     return {
         "timestamp": datetime.now().strftime("%H:%M"),
-        "stress_level": 30,
-        "focus_level": 65,
-        "tiredness_level": 20,
+        "stress_level": stress_service.get_value(),
+        "focus_level": focus_service.get_value(),
+        "tiredness_level": tiredness_service.get_value(),
     }
 
 
