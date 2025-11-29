@@ -15,6 +15,7 @@ from eeg_config import (
     BATTERY_MAX_MV,
     BATTERY_MIN_MV,
     DATA_FOLDER_PATH,
+    DEVICE_NAME,
     NUM_ACCEL_CHANNELS,
     NUM_CHANNELS,
     PACKET_SIZE,
@@ -51,10 +52,11 @@ async def setup_device(mock: bool) -> Optional[EEGHeadset]:
         logger.info("Mock mode enabled - no hardware connection needed")
         return None
 
+    logger.info(f"Attempting to connect to real device ({DEVICE_NAME})...")
     headset = EEGHeadset(participant_id="connector_session")
 
     if headset.connect():
-        logger.info("Successfully connected to BrainAccess Halo headset!")
+        logger.info("Successfully connected to BrainAccess device!")
         if headset.start_recording(session_name="eeg_stream"):
             logger.info("Started recording from headset")
             return headset
@@ -63,7 +65,12 @@ async def setup_device(mock: bool) -> Optional[EEGHeadset]:
             headset.disconnect()
             return None
     else:
-        logger.error("Failed to connect to headset")
+        logger.error(
+            f"Failed to connect to {DEVICE_NAME}. "
+            "Troubleshooting:\n"
+            "  1. For real hardware: Ensure device is powered, paired via Bluetooth, and libbacore.so is installed\n"
+            "  2. To use mock mode: Run with --mock flag (e.g., 'uv run src/connector.py start --mock')"
+        )
         return None
 
 
@@ -238,15 +245,32 @@ async def stream_process(mock: bool) -> None:
 
 
 @app.command()
-def start(mock: bool = False, debug: bool = False) -> None:
+def start(mock: bool = True, debug: bool = False) -> None:
     """
     Starts the EEG -> Docker bridge.
-    Use --mock if you don't have the cap connected.
-    Use --debug to see detailed data logs.
+    
+    Args:
+        mock: If True (default), run in mock simulation mode. 
+              If False, connect to real BA MINI 049 device over Bluetooth.
+        debug: If True, enable verbose debug logging.
+    
+    Note:
+        Real hardware mode requires:
+        1. libbacore.so native library installed
+        2. BA MINI 049 device paired via Bluetooth
+        3. Correct device name configured in eeg_config.py
     """
     if debug:
         logger.setLevel(logging.DEBUG)
         logger.debug("Debug mode enabled - verbose logging ON")
+
+    if not mock:
+        logger.warning(
+            "Real hardware mode selected. Ensure:\n"
+            "  1. libbacore.so is installed (contact Neurotechnology)\n"
+            "  2. BA MINI 049 is powered and paired via Bluetooth\n"
+            "  3. Device name is correct: {}".format(DEVICE_NAME)
+        )
 
     try:
         asyncio.run(stream_process(mock))

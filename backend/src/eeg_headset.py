@@ -1,7 +1,7 @@
-"""EEG Headset interface for BrainAccess Halo.
+"""EEG Headset interface for BrainAccess MINI 049.
 
 This module handles connection and data acquisition from the BrainAccess
-Halo 8-channel headset with robust error handling and data buffering.
+MINI 049 4-channel headset with robust error handling and data buffering.
 """
 
 import os
@@ -10,21 +10,24 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from eeg_config import DATA_FOLDER_PATH, NUM_CHANNELS, PORT, SAMPLING_RATE, USED_DEVICE
+from eeg_config import DATA_FOLDER_PATH, DEVICE_NAME, NUM_CHANNELS, SAMPLING_RATE, USED_DEVICE
 
 # --- HARDWARE IMPORTS SECTION ---
+BRAINACCESS_AVAILABLE = False
 try:
-    import brainaccess.core as bacore
-    from brainaccess.core.eeg_manager import EEGManager
     from brainaccess.utils import acquisition
-
+    from brainaccess.core.eeg_manager import EEGManager
+    import brainaccess.core as bacore
     BRAINACCESS_AVAILABLE = True
-except (ImportError, RuntimeError, OSError) as e:
-    BRAINACCESS_AVAILABLE = False
+except Exception as e:
+    # brainaccess requires libbacore.so native library
+    # This is expected to fail on systems without the hardware drivers
+    print(f"[INFO] BrainAccess library not available: {e}")
+    print("[INFO] This is expected if libbacore.so (hardware driver) is not installed")
 
 
 class EEGHeadset:
-    """Handle connection and data acquisition from BrainAccess Halo 8-channel headset."""
+    """Handle connection and data acquisition from BrainAccess MINI 049 4-channel headset."""
 
     def __init__(self, participant_id: str = "test_user") -> None:
         """Initialize the EEG headset interface.
@@ -48,15 +51,19 @@ class EEGHeadset:
             try:
                 print("Initializing BrainAccess library...")
                 bacore.init(bacore.Version(2, 0, 0))
+                print("BrainAccess library initialized successfully")
             except Exception as e:
                 print(f"Warning: Could not initialize BrainAccess: {e}")
+                BRAINACCESS_AVAILABLE = False
+        else:
+            print("BrainAccess library import failed - check dependencies")
 
         # Create directories for data storage
         self._create_dir_if_not_exist(DATA_FOLDER_PATH)
         self._create_dir_if_not_exist(self._save_dir_path)
 
     def connect(self) -> bool:
-        """Connect to the BrainAccess Halo headset.
+        """Connect to the BrainAccess MINI 049 headset over Bluetooth.
 
         Returns:
             True if connection was successful, False otherwise.
@@ -69,20 +76,29 @@ class EEGHeadset:
             print("BrainAccess library not available.")
             return False
 
-        print(f"Attempting to connect to BrainAccess Halo on port {PORT}...")
+        print(f"Attempting to connect to {DEVICE_NAME} over Bluetooth...")
 
         while self._connection_attempts < self._max_attempts:
             try:
+                # Create EEG manager and acquisition objects
                 self._eeg_manager = EEGManager()
                 self._eeg_acquisition = acquisition.EEG()
 
-                # Connect to the headset
-                self._eeg_acquisition.setup(self._eeg_manager, USED_DEVICE, port=PORT)
+                # Setup EEG acquisition with BA MINI 049 device
+                # The cap parameter maps channel indices to electrode names
+                self._eeg_acquisition.setup(
+                    self._eeg_manager,
+                    device_name=DEVICE_NAME,
+                    cap=USED_DEVICE,
+                    sfreq=SAMPLING_RATE,
+                )
 
                 # Check connection
                 if self._eeg_manager.is_connected():
                     self._is_connected = True
-                    print("Successfully connected to BrainAccess Halo!")
+                    print(f"Successfully connected to {DEVICE_NAME}!")
+                    print(f"Sampling rate: {SAMPLING_RATE} Hz")
+                    print(f"Channels: {list(USED_DEVICE.values())}")
                     return True
 
             except Exception as e:
@@ -93,15 +109,15 @@ class EEGHeadset:
                 print(f"Retrying in {self._connection_attempts} seconds...")
                 time.sleep(self._connection_attempts)
 
-        print("Failed to connect to the headset after multiple attempts.")
+        print(f"Failed to connect to {DEVICE_NAME} after multiple attempts.")
         print("Please check that:")
         print("1. The device is turned on and charged")
-        print("2. The device is within Bluetooth range")
-        print("3. The port configuration is correct")
+        print("2. The device is paired via Bluetooth")
+        print("3. The device name is correct (currently: {})".format(DEVICE_NAME))
         return False
 
     def disconnect(self) -> None:
-        """Disconnect from the BrainAccess Halo headset."""
+        """Disconnect from the BrainAccess MINI 049 headset."""
         if not self._is_connected:
             print("Not connected to any headset.")
             return
@@ -113,7 +129,7 @@ class EEGHeadset:
             if self._eeg_manager:
                 self._eeg_manager.disconnect()
             self._is_connected = False
-            print("Disconnected from BrainAccess Halo.")
+            print(f"Disconnected from {DEVICE_NAME}.")
         except Exception as e:
             print(f"Error disconnecting from the headset: {str(e)}")
 
