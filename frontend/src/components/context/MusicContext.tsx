@@ -59,13 +59,14 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       apiService.getMusicRecommendation().then(response => {
         const recommendedType = response.music_type;
         playTrack(recommendedType);
+        console.log(`Przełączono muzykę na: ${recommendedType}`);
       });
       // const currentIndex = types.indexOf(currentType);
       // const nextIndex = (currentIndex + 1) % types.length;
       
       //const nextType = types[nextIndex];
       
-      // console.log(`Przełączono muzykę na: ${nextType}`);
+     
       // playTrack(nextType);
 
     } catch (error) {
