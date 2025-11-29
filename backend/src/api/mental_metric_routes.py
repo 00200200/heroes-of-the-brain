@@ -39,7 +39,7 @@ async def get_current():
     # Collect results from three separate model singletons
     # return {
     #     "stress_level": stress_service.get_value(),
-    #     "focus_level": focus_service.get_value(),
+    #     "focus_lev3el": focus_service.get_value(),
     #     "tiredness_level": tiredness_service.get_value(),
     # }
     return {
