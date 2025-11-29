@@ -1,7 +1,6 @@
 import { RefreshCcw, Square, Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
-
-
+import BiofeedbackChart from '../components/BiofeedbackChart';
 
 // Definicja faz cyklu
 type Phase = 'idle' | 'inhale' | 'hold-in' | 'exhale' | 'hold-out';
@@ -78,6 +77,8 @@ const handleToggle = () => setIsActive(!isActive);
 const currentConfig = PHASE_CONFIG[phase];
 
 return (
+  <div>
+    <BiofeedbackChart />
     <div className="flex flex-col items-center justify-center min-h-[500px] w-full bg-green-50 p-6 rounded-3xl">
      {/* Nagłówek */}
       <div className="text-center mb-12">
@@ -140,5 +141,6 @@ return (
     )}
       </button>
     </div>
+  </div>
 );
 }
