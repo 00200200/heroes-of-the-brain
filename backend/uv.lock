@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -334,7 +334,9 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "brainaccess" },
+    { name = "fastapi" },
     { name = "numpy" },
+    { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "requests" },
     { name = "typer" },
@@ -351,10 +353,12 @@ server = [
 [package.metadata]
 requires-dist = [
     { name = "brainaccess", git = "https://github.com/KN-Neuron/brainaccess-python-api.git" },
+    { name = "fastapi", specifier = ">=0.122.0" },
     { name = "fastapi", marker = "extra == 'server'", specifier = ">=0.122.0" },
     { name = "mne", marker = "extra == 'server'", specifier = ">=1.11.0" },
     { name = "numpy", specifier = ">=2.3.5" },
     { name = "pandas", marker = "extra == 'server'", specifier = ">=2.3.3" },
+    { name = "pydantic", specifier = ">=2.12.5" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "requests", specifier = ">=2.31.0" },
     { name = "typer", specifier = ">=0.9.0" },
