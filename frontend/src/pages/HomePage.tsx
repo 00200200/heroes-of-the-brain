@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
-import circleRunGif from '../assets/circle-run.gif';
+import stressRedGif from '../assets/windy-tree.gif';
 
 export default function HomePage() {
   const modules = [
@@ -11,15 +11,7 @@ export default function HomePage() {
 		color: '#3b82f6',
 		path: '/stress',
 		status: 'active',
-		background: circleRunGif
-	},
-	{
-		id: 'pomodoro',
-		title: 'Adaptywny Pomodoro',
-		description: 'Timer dostosowujący się do Twojego stanu flow',
-		color: '#0ea5e9',
-		path: '/pomodoro',
-		status: 'active',
+		background: stressRedGif
 	}
 
   ];
@@ -49,7 +41,7 @@ export default function HomePage() {
                 <img 
                   src={module.background} 
                   alt="Background animation" 
-                  className="w-full h-full object-cover opacity-90 group-hover:opacity-30 transition-opacity duration-500"
+                  className="w-full h-full object-cover opacity-90 group-hover:opacity-30 transition-opacity duration-1000"
                 />
                 {/* Gradient przyciemniający, żeby tekst był czytelny na GIFie */}
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-gray-900/40" />
