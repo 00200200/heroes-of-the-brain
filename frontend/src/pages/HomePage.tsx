@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 import stressRedGif from '../assets/windy-tree.gif';
+import solvroCat from '../assets/solvro_cat.gif';
 import BiofeedbackChart from '../components/BiofeedbackChart';
 
 export default function HomePage() {
@@ -65,9 +66,12 @@ export default function HomePage() {
 	return (
 		<div>
 			<div className='mb-12'>
-				<h3 className='text-xl text-center font-medium mb-6 text-gray-200 flex items-center gap-3 justify-center'>
-					Stan mentalny
-				</h3>
+				<div className='flex items-center gap-3 sm:gap-4 justify-center mb-6'>
+					<h3 className='text-2xl sm:text-3xl md:text-4xl text-center font-medium text-gray-200'>
+						Stan mentalny
+					</h3>
+					<img src={solvroCat} alt='Solvro Cat' className='w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain' />
+				</div>
 
 				{error && (
 					<div className='bg-red-950/30 border border-red-900/50 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm'>
@@ -87,10 +91,10 @@ export default function HomePage() {
 					</div>
 				) : metrics ? (
 					<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-5 border border-gray-800 hover:border-red-500/40 transition-all'>
+						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-red-500/40 transition-all'>
 							<div className='flex items-center justify-between mb-3'>
-								<span className='text-sm font-medium text-gray-400 uppercase tracking-wider'>Stres</span>
-								<span className='text-2xl font-bold text-red-400'>{metrics.stress_level}%</span>
+								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Stres</span>
+								<span className='text-3xl font-bold text-red-400'>{metrics.stress_level}%</span>
 							</div>
 							<div className='w-full bg-gray-800 rounded-full h-2 overflow-hidden'>
 								<div
@@ -100,10 +104,10 @@ export default function HomePage() {
 							</div>
 						</div>
 
-						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-5 border border-gray-800 hover:border-cyan-500/40 transition-all'>
+						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-cyan-500/40 transition-all'>
 							<div className='flex items-center justify-between mb-3'>
-								<span className='text-sm font-medium text-gray-400 uppercase tracking-wider'>Focus</span>
-								<span className='text-2xl font-bold text-cyan-400'>{metrics.focus_level}%</span>
+								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Focus</span>
+								<span className='text-3xl font-bold text-cyan-400'>{metrics.focus_level}%</span>
 							</div>
 							<div className='w-full bg-gray-800 rounded-full h-2 overflow-hidden'>
 								<div
@@ -113,10 +117,10 @@ export default function HomePage() {
 							</div>
 						</div>
 
-						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-5 border border-gray-800 hover:border-purple-500/40 transition-all'>
+						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-purple-500/40 transition-all'>
 							<div className='flex items-center justify-between mb-3'>
-								<span className='text-sm font-medium text-gray-400 uppercase tracking-wider'>Zmęczenie</span>
-								<span className='text-2xl font-bold text-purple-400'>{metrics.tiredness_level}%</span>
+								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Zmęczenie</span>
+								<span className='text-3xl font-bold text-purple-400'>{metrics.tiredness_level}%</span>
 							</div>
 							<div className='w-full bg-gray-800 rounded-full h-2 overflow-hidden'>
 								<div
