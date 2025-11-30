@@ -8,6 +8,7 @@ import concentrationGif from '../assets/flying_monster.gif';
 import sleepGif from '../assets/night_sky.gif';
 
 import BiofeedbackChart from '../components/BiofeedbackChart';
+import NeuralBackground from '../components/NeuralBackground';
 
 export default function HomePage() {
 	const [metrics, setMetrics] = useState<{
@@ -84,8 +85,10 @@ export default function HomePage() {
 	];
 
 	return (
-		<div className='font-mono'>
-			<div className='mb-12'>
+		<>
+			<NeuralBackground />
+			<div className='font-mono'>
+				<div className='mb-12'>
 				<div className='flex items-center gap-3 sm:gap-4 justify-center mb-6'>
 					<h3 className='text-2xl sm:text-3xl md:text-4xl text-center font-medium text-gray-200'>
 						Stan mentalny
@@ -200,6 +203,7 @@ export default function HomePage() {
 					</div>
 				))}
 			</div>
-		</div>
+			</div>
+		</>
 	);
 }
