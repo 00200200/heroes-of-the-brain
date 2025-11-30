@@ -125,7 +125,7 @@ class ApiService {
         // Przykład: Zakładam, że endpoint to /config/pomodoro
         // Jeśli backend jeszcze nie istnieje, możesz tu zwrócić mocka
         try {
-             const response = await fetch(`${API_URL}/config/pomodoro`);
+             const response = await fetch(`${API_URL}/pomodoro/next`);
              return response.json();
              
              // Mock na czas developmentu (odkomentuj jeśli nie masz backendu):
