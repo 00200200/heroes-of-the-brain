@@ -138,6 +138,9 @@ async def get_history(limit: int = 10):
     return data_points
 
 
+pomodoro_stepper = PomodoroStepper()
+
+
 @router.post("/pomodoro/update_times")
 async def update_pomodoro_times(
     work_time: int = Body(..., embed=True),

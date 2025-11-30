@@ -127,7 +127,7 @@ if __name__ == "__main__":
         # Zmienne kontrolne
         last_idx = 0
         last_save_time = time.time()
-        save_interval = 5.0
+        save_interval = 3.0
         annotation = 1
 
         try:

@@ -45,8 +45,8 @@ export default function HomePage() {
 	const modules = [
 		{
 			id: 'stress',
-			title: 'Redukcja Stresu',
-			description: 'Techniki relaksacyjne współpracujące z twoim umysłem',
+			title: 'Stress Management',
+			description: 'Relaxation techniques to help you manage stress effectively',
 			color: '#3b82f6',
 			path: '/stress',
 			status: 'active',
@@ -56,7 +56,7 @@ export default function HomePage() {
 		{
 			id: 'pomodoro',
 			title: 'Pomodoro',
-			description: 'Spersonalizowane sesje pracy oparte na twoim stanie umysłu',
+			description: 'Personalized Pomodoro technique sessions based on your mental state',
 			color: '#10b981',
 			path: '/pomodoro',
 			status: 'active',
@@ -65,8 +65,8 @@ export default function HomePage() {
 
 		{
 			id: 'concentration',
-			title: 'Trening Koncentracji',
-			description: 'Ćwiczenia poprawiające twoją zdolność skupienia uwagi',
+			title: 'Concentration Booster',
+			description: 'Excercise to enchance your focus',
 			color: '#f59e0b',
 			path: '/concentration',
 			status: 'active',
@@ -75,8 +75,8 @@ export default function HomePage() {
 
 		{
 			id: 'sleep',
-			title: 'Przygotowanie do Snu',
-			description: 'Relaksacyjne techniki ułatwiające zasypianie',
+			title: 'Sleep Aid',
+			description: 'Relaxing sounds and tips to improve your sleep quality',
 			color: '#8b5cf6',
 			path: '/sleep',
 			status: 'active',
@@ -196,7 +196,7 @@ export default function HomePage() {
 
 							{module.status === 'active' && (
 								<div className='mt-5 p-3 rounded-lg text-center font-semibold text-sm bg-cyan-500/20 text-cyan-300 backdrop-blur-sm border border-cyan-500/20 hover:bg-cyan-500/30 transition-colors'>
-									Uruchom
+									Start
 								</div>
 							)}
 						</div>

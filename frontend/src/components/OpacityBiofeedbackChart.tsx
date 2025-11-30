@@ -33,6 +33,9 @@ export default function BiofeedbackChart() {
             try {
                 // 1. Pobieramy JEDEN aktualny punkt z backendu
                 const newPoint = await apiService.getMentalMetrics(); 
+                newPoint.timestamp = new Date().toLocaleTimeString(); // Dodajemy czytelny czas
+				//ucinamy rok, miesiac, dzien
+				newPoint.timestamp = newPoint.timestamp.slice(0, 8);
                 
                 // 2. Dodajemy go do istniejącej historii (używając callbacka w setData)
                 setData(prevData => {
@@ -111,8 +114,8 @@ export default function BiofeedbackChart() {
                                 <stop offset='95%' stopColor='#ef4444' stopOpacity={0} />
                             </linearGradient>
                             <linearGradient id='colorFocus' x1='0' y1='0' x2='0' y2='1'>
-                                <stop offset='5%' stopColor='#3b82f6' stopOpacity={0.4} />
-                                <stop offset='95%' stopColor='#3b82f6' stopOpacity={0} />
+                                <stop offset='5%' stopColor='#26C6DA' stopOpacity={0.4} />
+                                <stop offset='95%' stopColor='#26C6DA' stopOpacity={0} />
                             </linearGradient>
                             <linearGradient id='colorFatigue' x1='0' y1='0' x2='0' y2='1'>
                                 <stop offset='5%' stopColor='#a855f7' stopOpacity={0.4} />
@@ -156,7 +159,7 @@ export default function BiofeedbackChart() {
                             type='monotone'
                             dataKey='focus_level'
                             name='Skupienie'
-                            stroke='#3b82f6'
+                            stroke='#26C6DA'
                             strokeWidth={3}
                             fillOpacity={1}
                             fill='url(#colorFocus)'
