@@ -131,7 +131,7 @@ class ApiService {
 		} catch (error) {
 			console.error('Błąd pobierania konfiguracji:', error);
 			// Fallback do wartości domyślnych w razie błędu
-			return { work: 25 * 60, shortBreak: 5 * 60, longBreak: 15 * 60 };
+			return { work: 10 * 60, shortBreak: 5 * 60, longBreak: 15 * 60 };
 		}
 	}
 
