@@ -13,6 +13,12 @@ export interface MeanMetrics {
 	timestamp: string;
 }
 
+export interface TimerConfig {
+    work: number;       // w sekundach
+    shortBreak: number; // w sekundach
+    longBreak: number;  // w sekundach
+}
+
 export interface PomodoroResponse {
 	work_duration: number;
 	break_duration: number;
@@ -114,6 +120,28 @@ class ApiService {
 		}
 		return response.json();
 	}
+
+	async getPomodoroConfig(): Promise<TimerConfig> {
+        // Przykład: Zakładam, że endpoint to /config/pomodoro
+        // Jeśli backend jeszcze nie istnieje, możesz tu zwrócić mocka
+        try {
+             const response = await fetch(`${API_URL}/config/pomodoro`);
+             return response.json();
+             
+             // Mock na czas developmentu (odkomentuj jeśli nie masz backendu):
+             // return new Promise(resolve => setTimeout(() => resolve({
+             //     work: 25 * 60,
+             //     shortBreak: 5 * 60,
+             //     longBreak: 15 * 60
+             // }), 500));
+        } catch (error) {
+            console.error('Błąd pobierania konfiguracji:', error);
+            // Fallback do wartości domyślnych w razie błędu
+            return { work: 25 * 60, shortBreak: 5 * 60, longBreak: 15 * 60 };
+        }
+    }
+
+
 
 }
 

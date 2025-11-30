@@ -3,30 +3,50 @@ import { Play, Pause, RotateCcw, Coffee, Briefcase, Brain, Zap } from 'lucide-re
 import treeGif from '../assets/tree.gif';
 import BiofeedbackChart from '../components/BiofeedbackChart';
 import OpacityBiofeedbackChart from '../components/OpacityBiofeedbackChart';
+// 1. DODANO: import serwisu API
+import { apiService, type TimerConfig } from '../services/api';
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
-interface TimerConfig {
-  work: number;
-  shortBreak: number;
-  longBreak: number;
-}
-
-// These will be dynamically adjusted based on flow state in the future
-const DEFAULT_CONFIG: TimerConfig = {
-  work: 25*60, // Will be adapted to user's flow state
-  shortBreak: 5 * 60, // Will be adapted to recovery needs
-  longBreak: 15 * 60, // Will be adapted to fatigue levels
+// 2. ZMIANA: To teraz służy jako wartości startowe (fallback), zanim przyjdą dane z API
+const FALLBACK_CONFIG: TimerConfig = {
+  work: 25 * 60,
+  shortBreak: 5 * 60,
+  longBreak: 15 * 60,
 };
 
 export default function PomodoroPage() {
+  // 3. DODANO: Stan trzymający konfigurację (zaczyna od fallbacka)
+  const [config, setConfig] = useState<TimerConfig>(FALLBACK_CONFIG);
+
   const [mode, setMode] = useState<TimerMode>('work');
-  const [timeLeft, setTimeLeft] = useState(DEFAULT_CONFIG.work);
+  const [timeLeft, setTimeLeft] = useState(FALLBACK_CONFIG.work);
   const [isActive, setIsActive] = useState(false);
   const [completedPomodoros, setCompletedPomodoros] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const totalTime = DEFAULT_CONFIG[mode];
+  // 4. DODANO: Pobieranie konfiguracji z backendu po załadowaniu strony
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        // Zakładam, że dodałeś metodę getPomodoroConfig do apiService
+        const apiConfig = await apiService.getPomodoroConfig();
+        setConfig(apiConfig);
+        
+        // Jeśli timer nie odlicza, zaktualizuj od razu czas na ekranie
+        if (!isActive) {
+            setTimeLeft(apiConfig[mode]);
+        }
+      } catch (error) {
+        console.error("Błąd pobierania configu, używam domyślnego:", error);
+      }
+    };
+    fetchConfig();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Wywołaj tylko raz
+
+  // 5. ZMIANA: Używamy 'config' zamiast stałej
+  const totalTime = config[mode];
   const progress = ((totalTime - timeLeft) / totalTime) * 100;
 
   useEffect(() => {
@@ -60,12 +80,10 @@ export default function PomodoroPage() {
       switchMode('work');
     }
 
-    // Play notification sound (optional)
     playNotificationSound();
   };
 
   const playNotificationSound = () => {
-    // Simple beep using Web Audio API
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -85,7 +103,8 @@ export default function PomodoroPage() {
 
   const switchMode = (newMode: TimerMode) => {
     setMode(newMode);
-    setTimeLeft(DEFAULT_CONFIG[newMode]);
+    // 6. ZMIANA: Używamy 'config'
+    setTimeLeft(config[newMode]);
     setIsActive(false);
   };
 
@@ -95,7 +114,8 @@ export default function PomodoroPage() {
 
   const handleReset = () => {
     setIsActive(false);
-    setTimeLeft(DEFAULT_CONFIG[mode]);
+    // 7. ZMIANA: Używamy 'config'
+    setTimeLeft(config[mode]);
   };
 
   const formatTime = (seconds: number) => {
@@ -136,8 +156,8 @@ export default function PomodoroPage() {
     }
   };
 
-  const config = getModeConfig();
-  const Icon = config.icon;
+  const uiConfig = getModeConfig();
+  const Icon = uiConfig.icon;
 
   return (
     <div className="relative w-full max-w-xl lg:max-w-2xl mx-auto px-4">
@@ -184,8 +204,8 @@ export default function PomodoroPage() {
           <div className="flex items-center justify-center mb-3 sm:mb-4 md:mb-6">
             <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 mr-2 md:mr-3 text-white" />
             <div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white">{config.title}</h3>
-              <p className="text-white/70 text-xs sm:text-xs md:text-sm">{config.subtitle}</p>
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white">{uiConfig.title}</h3>
+              <p className="text-white/70 text-xs sm:text-xs md:text-sm">{uiConfig.subtitle}</p>
             </div>
           </div>
 
