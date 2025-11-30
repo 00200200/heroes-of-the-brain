@@ -21,20 +21,20 @@ class TirednessModel:
     def __init__(self):
         self._level = 0
 
-    def calculate(self, alpha: list[float], theta: list[float], beta: list[float]) -> None:
-        """Calculate and update the tiredness level (logarithmic scaling)."""
-        if not alpha or not theta or not beta:
-            return
-        numerator = np.mean(alpha) + np.mean(theta)
-        denominator = np.mean(beta) + 0.01  # Small epsilon to avoid division by zero
-        tiredness = numerator / denominator
-        log_tiredness = np.log(tiredness + 1)
-        # log(4) ~ 1.386, so tiredness=3 maps to 100
-        level = min(100, max(0, int((log_tiredness / np.log(4)) * 100)))
-        self._level = level
+    def calculate(self, tiredness_metric: list[float], dummy1: list[float] = None, dummy2: list[float] = None) -> None:
+        """Calculate and update the tiredness level using relative (theta+alpha)/total power.
+
+        Args:
+            tiredness_metric: List of relative tiredness values.
+            dummy1, dummy2: Unused, for compatibility.
+        """
+        val = np.mean(tiredness_metric)
+        # Normalizacja: typowo 0-1, mapujemy 0-1 na 0-100
+        norm = np.clip(val, 0.0, 1.0)
+        self._level = int(norm * 100)
         logging.getLogger(__name__).info(
-            "TirednessModel: alpha=%.3f, theta=%.3f, beta=%.3f, numerator=%.3f, denominator=%.3f, tiredness=%.3f, log_tiredness=%.3f, level=%d",
-            np.mean(alpha), np.mean(theta), np.mean(beta), numerator, denominator, tiredness, log_tiredness, level,
+            "TirednessModel: tiredness_metric=%.3f, level=%d",
+            val, self._level,
         )
 
     def get_value(self) -> int:
