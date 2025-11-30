@@ -127,7 +127,7 @@ if __name__ == "__main__":
         # Zmienne kontrolne
         last_idx = 0
         last_save_time = time.time()
-        save_interval = 2.0
+        save_interval = 5.0
         annotation = 1
 
         try:
@@ -135,7 +135,7 @@ if __name__ == "__main__":
             while True:
                 current_time = time.time()
 
-                # Timer: Co 3 sekundy
+                # Timer: Co 5 sekund
                 if current_time - last_save_time >= save_interval:
 
                     logger.info("--- 5s  Tick: Annotation %d", annotation)
