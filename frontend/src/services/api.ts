@@ -122,24 +122,18 @@ class ApiService {
 	}
 
 	async getPomodoroConfig(): Promise<TimerConfig> {
-        // Przykład: Zakładam, że endpoint to /config/pomodoro
-        // Jeśli backend jeszcze nie istnieje, możesz tu zwrócić mocka
-        try {
-             const response = await fetch(`${API_URL}/pomodoro/update_times`);
-             return response.json();
-             
-             // Mock na czas developmentu (odkomentuj jeśli nie masz backendu):
-             // return new Promise(resolve => setTimeout(() => resolve({
-             //     work: 25 * 60,
-             //     shortBreak: 5 * 60,
-             //     longBreak: 15 * 60
-             // }), 500));
-        } catch (error) {
-            console.error('Błąd pobierania konfiguracji:', error);
-            // Fallback do wartości domyślnych w razie błędu
-            return { work: 25 * 60, shortBreak: 5 * 60, longBreak: 15 * 60 };
-        }
-    }
+		try {
+			const response = await fetch(`${API_URL}/pomodoro/config`);
+			if (!response.ok) {
+				throw new Error('Failed to fetch pomodoro config');
+			}
+			return await response.json();
+		} catch (error) {
+			console.error('Błąd pobierania konfiguracji:', error);
+			// Fallback do wartości domyślnych w razie błędu
+			return { work: 25 * 60, shortBreak: 5 * 60, longBreak: 15 * 60 };
+		}
+	}
 
 
 
