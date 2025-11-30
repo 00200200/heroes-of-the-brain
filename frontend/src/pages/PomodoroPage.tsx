@@ -31,6 +31,7 @@ export default function PomodoroPage() {
       try {
         // Zakładam, że dodałeś metodę getPomodoroConfig do apiService
         const apiConfig = await apiService.getPomodoroConfig();
+        console.log("Pobrany config z API:", apiConfig);
         setConfig(apiConfig);
         
         // Jeśli timer nie odlicza, zaktualizuj od razu czas na ekranie
