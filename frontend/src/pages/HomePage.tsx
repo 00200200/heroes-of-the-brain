@@ -24,14 +24,15 @@ export default function HomePage() {
 			const fetchMetrics = async () => {
 				try {
 					setLoading(true);
-					const data = await apiService.getMentalMetrics();
+					const data = await apiService.getMeanMetrics();
+					console.log('Fetched Mean Metrics:', data);
 					setMetrics(data);
 				} catch (err) {
 					console.error(err);
 				} finally {
 					setLoading(false);
 					// Ustawiamy kolejne wywołanie dopiero PO zakończeniu obecnego
-					timeoutId = setTimeout(fetchMetrics, 30000);
+					timeoutId = setTimeout(fetchMetrics, 10000);
 				}
 			};
 

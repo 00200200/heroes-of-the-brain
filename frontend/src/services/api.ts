@@ -5,6 +5,14 @@ export interface PomodoroRequest {
 	stress_level: number;
 }
 
+
+export interface MeanMetrics {
+	stress_level: number;
+	focus_level: number;
+	tiredness_level: number;
+	timestamp: string;
+}
+
 export interface PomodoroResponse {
 	work_duration: number;
 	break_duration: number;
@@ -98,6 +106,15 @@ class ApiService {
 		}
 		return response.json();
 	}
+
+	async getMeanMetrics(): Promise<MentalMetrics> {
+		const response = await fetch(`${this.baseUrl}/mean_metrics`);
+		if (!response.ok) {
+			throw new Error('Failed to fetch mean metrics');
+		}
+		return response.json();
+	}
+
 }
 
 export const apiService = new ApiService();

@@ -33,7 +33,9 @@ export default function BiofeedbackChart() {
             try {
                 // 1. Pobieramy JEDEN aktualny punkt z backendu
                 const newPoint = await apiService.getMentalMetrics(); 
-                
+                newPoint.timestamp = new Date().toLocaleTimeString(); // Dodajemy czytelny czas
+				//ucinamy rok, miesiac, dzien
+				newPoint.timestamp = newPoint.timestamp.slice(0, 8);
                 // 2. Dodajemy go do istniejącej historii (używając callbacka w setData)
                 setData(prevData => {
                     // Tworzymy nową tablicę: [...stare, nowy]
