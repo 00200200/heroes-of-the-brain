@@ -55,18 +55,18 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 	const fetchAndPlayMusic = async () => {
 		try {
-			// const types: MusicType[] = ['focus', 'relax', 'energy', 'deep_relax'];
+			const types: MusicType[] = ['focus', 'relax', 'energy', 'deep_relax'];
 			apiService.getMusicRecommendation().then(response => {
 				const recommendedType = response.music_type;
 				playTrack(recommendedType);
 				console.log(`Przełączono muzykę na: ${recommendedType}`);
 			});
-			// const currentIndex = types.indexOf(currentType);
-			// const nextIndex = (currentIndex + 1) % types.length;
+			const currentIndex = types.indexOf(currentType);
+			const nextIndex = (currentIndex + 1) % types.length;
 
-			//const nextType = types[nextIndex];
+			const nextType = types[nextIndex];
 
-			// playTrack(nextType);
+			playTrack(nextType);
 		} catch (error) {
 			console.error('Błąd zmiany muzyki:', error);
 		}
@@ -75,22 +75,19 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	// Funkcja zmieniająca utwór
 	const playTrack = (type: MusicType) => {
 		if (!audioRef.current) return;
-		if (currentType === type) return; // Nie przerywaj jeśli to samo
+		if (currentType === type) return;
 
 		setCurrentType(type);
 
 		const src = TRACKS[type];
 		if (src) {
 			audioRef.current.src = src;
-			// Play musi być obsłużony ostrożnie (przeglądarki blokują autoplay bez interakcji)
 			audioRef.current.play().catch(e => console.warn('Autoplay zablokowany:', e));
 		}
 	};
 
-	// Pobierz muzykę automatycznie przy starcie aplikacji (opcjonalne)
 	useEffect(() => {
-		// Opcjonalnie: Odkomentuj to, jeśli chcesz próbować grać od razu po wejściu
-		// fetchAndPlayMusic();
+		fetchAndPlayMusic();
 	}, []);
 
 	const toggleMute = () => setIsMuted(prev => !prev);
