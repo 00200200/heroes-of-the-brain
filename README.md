@@ -5,9 +5,8 @@
 ### Requiremeents
 
 - [Docker](https://www.docker.com/get-started) i Docker Compose
-- Or without DOCKER:
-  - Python 3.11+
-  - Node.js 18+
+- Python 3.11+
+- Node.js 18+
 
 ### Run with docker
 
@@ -25,27 +24,35 @@
    ```
 
 3. **Open in browser**
+
    - Frontend: http://localhost:5173
    - Backend: http://localhost:8000
    - Documentation API: http://localhost:8000/docs
 
-4. **Run backend**
-   ``` 
-       cd backend
-       uv run src/connector.py
+4. **Run connector (in a separate terminal)**
+   ```bash
+   cd backend
+   uv run src/connector.py
    ```
 
 ### Run without docker
 
 #### Backend
 
-```bash
-cd backend
-pip install uv
-uv sync
-uv run uvicorn src.main:app
-uv run src/connector.py
-```
+1. **Run API server**
+
+   ```bash
+   cd backend
+   pip install uv
+   uv sync
+   uv run uvicorn src.main:app
+   ```
+
+2. **Run connector (in a separate terminal)**
+   ```bash
+   cd backend
+   uv run src/connector.py
+   ```
 
 #### Frontend
 
