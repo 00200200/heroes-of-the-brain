@@ -32,7 +32,7 @@ def mean_metrics():
     stress_vals = []
     tiredness_vals = []
     for b, a, t in zip(beta_list, alpha_list, theta_list):
-        focus_service.calculate([b])
+        focus_service.calculate([b], [t])
         stress_service.calculate([a], [b])
         tiredness_service.calculate([a], [t], [b])
         focus_vals.append(focus_service.get_value())
@@ -87,7 +87,7 @@ def update_models_from_latest_csv():
     alpha_val = alpha.mean()
     theta_val = theta.mean()
     logging.getLogger(__name__).info("beta_val: %.3f, alpha_val: %.3f, theta_val: %.3f", beta_val, alpha_val, theta_val)
-    focus_service.calculate([beta_val])
+    focus_service.calculate([beta_val], [theta_val])
     stress_service.calculate([alpha_val], [beta_val])
     tiredness_service.calculate([alpha_val], [theta_val], [beta_val])
     logging.getLogger(__name__).info(
