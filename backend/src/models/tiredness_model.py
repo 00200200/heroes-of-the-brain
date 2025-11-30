@@ -22,31 +22,19 @@ class TirednessModel:
         self._level = 0
 
     def calculate(self, alpha: list[float], theta: list[float], beta: list[float]) -> None:
-        """Calculate and update the tiredness level.
-
-        The formula used is: tiredness = (mean(alpha) + mean(theta)) / mean(beta).
-        The result is scaled to a 0-100 integer range. Logs the computed numerator, denominator, and level.
-
-        Args:
-            alpha (list[float]): List of alpha-wave amplitude values.
-            theta (list[float]): List of theta-wave amplitude values.
-            beta (list[float]): List of beta-wave amplitude values.
-
-        Side effects:
-            Updates the internal _level attribute with an integer value
-            between 0 and 100. If any input list is empty or falsy, the
-            method does nothing. Logs the computation.
-
-        """
+        """Calculate and update the tiredness level (logarithmic scaling)."""
         if not alpha or not theta or not beta:
             return
         numerator = np.mean(alpha) + np.mean(theta)
         denominator = np.mean(beta) + 0.01  # Small epsilon to avoid division by zero
-        level = min(100, max(0, int((numerator / denominator / 3.0) * 100)))
+        tiredness = numerator / denominator
+        log_tiredness = np.log(tiredness + 1)
+        # log(4) ~ 1.386, so tiredness=3 maps to 100
+        level = min(100, max(0, int((log_tiredness / np.log(4)) * 100)))
         self._level = level
         logging.getLogger(__name__).info(
-            "TirednessModel: alpha=%.3f, theta=%.3f, beta=%.3f, numerator=%.3f, denominator=%.3f, level=%d",
-            np.mean(alpha), np.mean(theta), np.mean(beta), numerator, denominator, level,
+            "TirednessModel: alpha=%.3f, theta=%.3f, beta=%.3f, numerator=%.3f, denominator=%.3f, tiredness=%.3f, log_tiredness=%.3f, level=%d",
+            np.mean(alpha), np.mean(theta), np.mean(beta), numerator, denominator, tiredness, log_tiredness, level,
         )
 
     def get_value(self) -> int:

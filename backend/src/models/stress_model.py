@@ -22,29 +22,18 @@ class StressModel:
         self._level = 0
 
     def calculate(self, alpha: list[float], beta: list[float]) -> None:
-        """Calculate and update the stress level.
-
-        The method computes the mean of beta divided by mean of alpha (with
-        a small epsilon to avoid division by zero), normalizes the ratio,
-        and clamps the result to the 0-100 integer range. Logs the computed ratio and level.
-
-        Args:
-            alpha (list[float]): Sequence of alpha-wave amplitudes.
-            beta (list[float]): Sequence of beta-wave amplitudes.
-
-        Side effects:
-            Updates the internal _level attribute.
-            Logs the computed ratio and level.
-
-        """
+        """Calculate and update the stress level (logarithmic scaling)."""
         if not alpha or not beta:
             return
         ratio = np.mean(beta) / (np.mean(alpha) + 0.01)
-        level = min(100, max(0, int((ratio / 3.0) * 100)))
+        # Logarithmic scaling for robustness
+        log_ratio = np.log(ratio + 1)
+        # log(4) ~ 1.386, so ratio=3 maps to 100
+        level = min(100, max(0, int((log_ratio / np.log(4)) * 100)))
         self._level = level
         logging.getLogger(__name__).info(
-            "StressModel: alpha=%.3f, beta=%.3f, ratio=%.3f, level=%d",
-            np.mean(alpha), np.mean(beta), ratio, level,
+            "StressModel: alpha=%.3f, beta=%.3f, ratio=%.3f, log_ratio=%.3f, level=%d",
+            np.mean(alpha), np.mean(beta), ratio, log_ratio, level,
         )
 
     def get_value(self) -> int:
