@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from src.models import mean_metrics, update_models_from_latest_csv
 from src.models.focus_model import focus_service
 from src.models.music_model import music_service
+from src.models.pomodoro_model import PomodoroStepper
 
 # Import singleton model instances
 from src.models.stress_model import stress_service
@@ -135,3 +136,17 @@ async def get_history(limit: int = 10):
             },
         )
     return data_points
+
+pomodoro_stepper = PomodoroStepper()
+
+@router.get("/pomodoro/next")
+async def get_next_pomodoro_step():
+    """
+    Return the next step in the Pomodoro cycle (work/break/long_break).
+    Resets to start after long break.
+    """
+    step = pomodoro_stepper.next_step()
+    if step is None:
+        pomodoro_stepper.reset()
+        step = pomodoro_stepper.next_step()
+    return step
