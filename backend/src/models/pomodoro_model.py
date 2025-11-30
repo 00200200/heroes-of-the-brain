@@ -141,7 +141,7 @@ def generate_pomodoro_schedule(
 
 class PomodoroStepper:
     """
-    Stepper for classic Pomodoro cycles. Umożliwia przechodzenie przez kolejne etapy i zwracanie pojedynczego kroku w formacie JSON.
+    Stepper for classic Pomodoro cycles. Allows progressing through steps and returning a single step in JSON format.
     """
     def __init__(self, session_length=25, break_length=5, long_break_length=20, cycles=4):
         self.session_length = session_length
@@ -174,7 +174,7 @@ class PomodoroStepper:
         return steps
 
     def next_step(self):
-        """Zwraca kolejny krok (work/break/long_break) jako dict lub None jeśli koniec cyklu."""
+        """Return the next step in the Pomodoro cycle, or None if finished."""
         if self.current_step >= len(self.steps):
             return None
         step = self.steps[self.current_step]

@@ -137,19 +137,6 @@ async def get_history(limit: int = 10):
         )
     return data_points
 
-pomodoro_stepper = PomodoroStepper()
-
-@router.get("/pomodoro/next")
-async def get_next_pomodoro_step():
-    """
-    Return the next step in the Pomodoro cycle (work/break/long_break).
-    Resets to start after long break.
-    """
-    step = pomodoro_stepper.next_step()
-    if step is None:
-        pomodoro_stepper.reset()
-        step = pomodoro_stepper.next_step()
-    return step
 
 @router.post("/pomodoro/update_times")
 async def update_pomodoro_times(
