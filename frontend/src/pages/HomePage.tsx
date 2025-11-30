@@ -91,7 +91,7 @@ export default function HomePage() {
 				<div className='mb-12'>
 				<div className='flex items-center gap-3 sm:gap-4 justify-center mb-6'>
 					<h3 className='text-2xl sm:text-3xl md:text-4xl text-center font-medium text-gray-200'>
-						Stan mentalny
+						Wellness Assistant
 					</h3>
 					<img src={solvroCat} alt='Solvro Cat' className='w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain' />
 				</div>
