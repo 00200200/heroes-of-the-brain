@@ -25,18 +25,24 @@ def mean_metrics():
     all_ts = [ts for (ts, e) in _eeg_buffer]
     mean_ts = float(np.mean(all_ts))
     # Calculate per-sample band powers for the buffer
-    beta = np.mean(all_eeg[:, :3], axis=1)
-    alpha = np.mean(all_eeg[:, 3:6], axis=1)
-    theta = np.mean(all_eeg[:, 6:8], axis=1)
-    # Use model singletons for normalization on the full lists
-    focus_service.calculate(list(beta))
-    stress_service.calculate(list(alpha), list(beta))
-    tiredness_service.calculate(list(alpha), list(theta), list(beta))
-    focus = focus_service.get_value()
-    stress = stress_service.get_value()
-    tiredness = tiredness_service.get_value()
+    beta_list = np.mean(all_eeg[:, :3], axis=1)
+    alpha_list = np.mean(all_eeg[:, 3:6], axis=1)
+    theta_list = np.mean(all_eeg[:, 6:8], axis=1)
+    focus_vals = []
+    stress_vals = []
+    tiredness_vals = []
+    for b, a, t in zip(beta_list, alpha_list, theta_list):
+        focus_service.calculate([b])
+        stress_service.calculate([a], [b])
+        tiredness_service.calculate([a], [t], [b])
+        focus_vals.append(focus_service.get_value())
+        stress_vals.append(stress_service.get_value())
+        tiredness_vals.append(tiredness_service.get_value())
+    focus = int(np.mean(focus_vals))
+    stress = int(np.mean(stress_vals))
+    tiredness = int(np.mean(tiredness_vals))
     logging.getLogger(__name__).info(
-        "mean_metrics (via models, list): focus=%d, stress=%d, tiredness=%d, ts=%.3f",
+        "mean_metrics (true mean): focus=%d, stress=%d, tiredness=%d, ts=%.3f",
         focus, stress, tiredness, mean_ts,
     )
     return {
