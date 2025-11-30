@@ -20,48 +20,56 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return null;
 };
 
-export default function OpacityBiofeedbackChart() {
+export default function BiofeedbackChart() {
     const [data, setData] = useState<MentalMetrics[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
+
+        useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout>;
+
         const fetchData = async () => {
             try {
-                setLoading(true);
-                const historyData = await apiService.getMetricsHistory(20);
-                setData(
-                    historyData.map(point => ({
-                        timestamp: point.timestamp,
-                        stress_level: point.stress_level,
-                        focus_level: point.focus_level,
-                        tiredness_level: point.tiredness_level,
-                    }))
-                );
+                // 1. Pobieramy JEDEN aktualny punkt z backendu
+                const newPoint = await apiService.getMentalMetrics(); 
+                
+                // 2. Dodajemy go do istniejącej historii (używając callbacka w setData)
+                setData(prevData => {
+                    // Tworzymy nową tablicę: [...stare, nowy]
+                    const updatedHistory = [...prevData, newPoint];
+
+                    // 3. Ograniczamy historię do ostatnich 20 punktów
+                    // (żeby wykres nie ścisnął się w nieskończoność po godzinie działania)
+                    if (updatedHistory.length > 50) {
+                        return updatedHistory.slice(-50); // Zwróć tylko 20 ostatnich
+                    }
+                    
+                    return updatedHistory;
+                });
+                
                 setError(null);
             } catch (err) {
-                setError("Can't fetch data check backend");
-                console.error('Error fetching metrics history:', err);
+                console.error('Error fetching metrics:', err);
             } finally {
                 setLoading(false);
+                // 4. Czekamy 5 sekund na kolejne pobranie
+                timeoutId = setTimeout(fetchData, 2000);
             }
         };
 
         fetchData();
-
-        const interval = setInterval(fetchData, 10000);
-
-        return () => clearInterval(interval);
+        return () => clearTimeout(timeoutId);
     }, []);
 
-    const getXAxisTicks = () => {
-        if (data.length <= 10) return undefined;
-        const step = Math.ceil(data.length / 8);
-        return data
-            .map((_, index) => index)
-            .filter((_, index) => index % step === 0)
-            .map(index => data[index].timestamp);
-    };
+    // const getXAxisTicks = () => {
+    // 	if (data.length <= 10) return undefined;
+    // 	const step = Math.ceil(data.length / 8);
+    // 	return data
+    // 		.map((_, index) => index)
+    // 		.filter((_, index) => index % step === 0)
+    // 		.map(index => data[index].timestamp);
+    // };
 
     if (loading && data.length === 0) {
         return (
@@ -84,14 +92,14 @@ export default function OpacityBiofeedbackChart() {
     }
 
     return (
-        <div className={'font-mono w-full bg-white/5 backdrop-blur-lg p-6 rounded-3xl border border-gray-800 shadow-2xl'}>
+        <div className={'font-mono w-full bg-white p-6 opacity-75 backdrop-blur-lg rounded-3xl border border-gray-800 shadow-2xl'}>
             <div className='flex justify-between items-center mb-6'>
                 <div>
                     <h3 className='text-xl font-bold text-white'>Biofeedback Trends</h3>
                     <p className='text-gray-500 text-sm ml-10'>Live analysis ({data.length} data points)</p>
                 </div>
 
-                <div className='px-3 py-1 backdrop-blur-lg bg-gray-400 border-gray-700 rounded-lg text-xs text-white'>Live</div>
+                <div className='px-3 py-1 bg-gray-900 border border-gray-700 rounded-lg text-xs text-gray-400'>Live</div>
             </div>
 
             <div className='h-[300px] w-full'>
@@ -121,8 +129,8 @@ export default function OpacityBiofeedbackChart() {
                             tickLine={false}
                             axisLine={false}
                             dy={10}
-                            ticks={getXAxisTicks()}
-                            interval='preserveStartEnd'
+                            interval="preserveStartEnd" // Zawsze pokaż pierwszy i ostatni czas
+                            minTickGap={30}
                         />
                         <YAxis stroke='#9ca3af' fontSize={12} tickLine={false} axisLine={false} dx={-10} domain={[0, 100]} />
 
@@ -141,6 +149,8 @@ export default function OpacityBiofeedbackChart() {
                             strokeWidth={3}
                             fillOpacity={1}
                             fill='url(#colorStress)'
+                            isAnimationActive={false}
+                            
                         />
                         <Area
                             type='monotone'
@@ -150,6 +160,7 @@ export default function OpacityBiofeedbackChart() {
                             strokeWidth={3}
                             fillOpacity={1}
                             fill='url(#colorFocus)'
+                            isAnimationActive={false}
                         />
                         <Area
                             type='monotone'
@@ -159,6 +170,7 @@ export default function OpacityBiofeedbackChart() {
                             strokeWidth={3}
                             fillOpacity={1}
                             fill='url(#colorFatigue)'
+                            isAnimationActive={false}
                         />
                     </AreaChart>
                 </ResponsiveContainer>

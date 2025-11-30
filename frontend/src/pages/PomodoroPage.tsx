@@ -14,7 +14,7 @@ interface TimerConfig {
 
 // These will be dynamically adjusted based on flow state in the future
 const DEFAULT_CONFIG: TimerConfig = {
-  work: 25 * 60, // Will be adapted to user's flow state
+  work: 25*60, // Will be adapted to user's flow state
   shortBreak: 5 * 60, // Will be adapted to recovery needs
   longBreak: 15 * 60, // Will be adapted to fatigue levels
 };

@@ -54,7 +54,7 @@ export default function BiofeedbackChart() {
             } finally {
                 setLoading(false);
                 // 4. Czekamy 5 sekund na kolejne pobranie
-                timeoutId = setTimeout(fetchData, 1000);
+                timeoutId = setTimeout(fetchData, 2000);
             }
         };
 
@@ -149,6 +149,8 @@ export default function BiofeedbackChart() {
 							strokeWidth={3}
 							fillOpacity={1}
 							fill='url(#colorStress)'
+							isAnimationActive={false}
+							
 						/>
 						<Area
 							type='monotone'
@@ -158,6 +160,7 @@ export default function BiofeedbackChart() {
 							strokeWidth={3}
 							fillOpacity={1}
 							fill='url(#colorFocus)'
+							isAnimationActive={false}
 						/>
 						<Area
 							type='monotone'
@@ -167,6 +170,7 @@ export default function BiofeedbackChart() {
 							strokeWidth={3}
 							fillOpacity={1}
 							fill='url(#colorFatigue)'
+							isAnimationActive={false}
 						/>
 					</AreaChart>
 				</ResponsiveContainer>
