@@ -146,7 +146,7 @@ export default function BiofeedbackChart() {
 						<Area
 							type='monotone'
 							dataKey='stress_level'
-							name='Stres'
+							name='Stress'
 							stroke='#ef4444'
 							strokeWidth={3}
 							fillOpacity={1}
@@ -157,7 +157,7 @@ export default function BiofeedbackChart() {
 						<Area
 							type='monotone'
 							dataKey='focus_level'
-							name='Skupienie'
+							name='Focus'
 							stroke='#26C6DA'
 							strokeWidth={3}
 							fillOpacity={1}
@@ -167,7 +167,7 @@ export default function BiofeedbackChart() {
 						<Area
 							type='monotone'
 							dataKey='tiredness_level'
-							name='Zmęczenie'
+							name='Tiredness'
 							stroke='#a855f7'
 							strokeWidth={3}
 							fillOpacity={1}

@@ -81,11 +81,11 @@ export default function ConcentrationDrill() {
       // TRAFIENIE
       setScore((prev) => prev + 1);
       setReactionTime(timeDiff);
-      setFeedback('Świetnie!');
+      setFeedback('Amazing!');
       pickNewTarget(); // Losujemy nowy cel po trafieniu
     } else {
       // PUDŁO
-      setFeedback('Pudło! Czekaj na kolor.');
+      setFeedback('Missed. Wait for the target color!');
       setReactionTime(null);
     }
   };
@@ -124,7 +124,7 @@ export default function ConcentrationDrill() {
           {/* Nagłówek */}
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-white mb-2">Reflex Trainer</h2>
-            <p className="text-white/70">Kliknij, gdy zobaczysz cel!</p>
+            <p className="text-white/70">Press space when target colour appears!</p>
           </div>
 
           {/* Panel Celu */}
@@ -161,7 +161,7 @@ export default function ConcentrationDrill() {
                {gameState === 'idle' && <Zap size={48} className="text-white/70" />}
                {gameState === 'playing' && (
                  <span className="text-white/90 font-bold text-sm uppercase tracking-widest mt-2">
-                    Naciśnij
+                    Press
                  </span>
                )}
             </div>
@@ -180,13 +180,13 @@ export default function ConcentrationDrill() {
           <div className="flex gap-8 mb-8 text-white">
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2 text-sm font-medium text-white/90 mb-1">
-                <Trophy size={16} /> Wynik
+                <Trophy size={16} /> Score
               </div>
               <span className="text-2xl font-bold">{score}</span>
             </div>
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2 text-sm font-medium text-white/90 mb-1">
-                <Timer size={16} /> Ostatni czas
+                <Timer size={16} /> Last time
               </div>
               <span className="text-2xl font-bold">
                 {reactionTime ? `${reactionTime}` : '-'} <span className="text-sm font-normal text-white/90">ms</span>
@@ -207,12 +207,12 @@ export default function ConcentrationDrill() {
           >
             {gameState === 'playing' ? (
               <>
-                <Square size={20} fill="currentColor" /> Zatrzymaj
+                <Square size={20} fill="currentColor" /> Stop
               </>
             ) : (
               <>
                 {gameState === 'finished' ? <RefreshCcw size={20} /> : <Play size={20} fill="currentColor" />} 
-                {gameState === 'finished' ? 'Zagraj ponownie' : 'Rozpocznij'}
+                {gameState === 'finished' ? 'Play again' : 'Begin'}
               </>
             )}
           </button>

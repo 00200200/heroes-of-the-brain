@@ -129,8 +129,8 @@ export default function PomodoroPage() {
     switch (mode) {
       case 'work':
         return {
-          title: 'Czas na Pracę',
-          subtitle: 'Skup się na zadaniu',
+          title: 'Time to work',
+          subtitle: 'Focus on the task ahead',
           color: 'from-sky-500/20 to-cyan-500/20',
           borderColor: 'border-sky-500/50',
           textColor: 'text-sky-400',
@@ -138,8 +138,8 @@ export default function PomodoroPage() {
         };
       case 'shortBreak':
         return {
-          title: 'Krótka Przerwa',
-          subtitle: 'Chwila odpoczynku',
+          title: 'Short Break',
+          subtitle: 'Take a quick rest',
           color: 'from-green-500/20 to-emerald-500/20',
           borderColor: 'border-green-500/50',
           textColor: 'text-green-400',
@@ -147,8 +147,8 @@ export default function PomodoroPage() {
         };
       case 'longBreak':
         return {
-          title: 'Długa Przerwa',
-          subtitle: 'Zrelaksuj się',
+          title: 'Long Break',
+          subtitle: 'Time to recharge',
           color: 'from-blue-500/20 to-cyan-500/20',
           borderColor: 'border-blue-500/50',
           textColor: 'text-blue-400',
@@ -180,12 +180,12 @@ export default function PomodoroPage() {
       <div className="text-center mb-6 md:mb-10 lg:mb-12">
         <div className="flex items-center justify-center gap-2 md:gap-3 mb-2 md:mb-3">
           <Brain className="w-7 h-7 md:w-8 md:h-8 text-white" />
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">Adaptywny Pomodoro</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">Adaptive Pomodoro</h2>
         </div>
-        <p className="text-xs sm:text-sm md:text-base text-white/70">Timer dostosowujący się do Twojego stanu flow</p>
+        <p className="text-xs sm:text-sm md:text-base text-white/70">Timer adapting to your flow state</p>
         <div className="mt-2 md:mt-3 inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-white/10 rounded-full border border-white/30">
           <Zap className="w-3 h-3 md:w-4 md:h-4 text-white" />
-          <span className="text-xs md:text-sm text-white font-medium">Automatyczne dostosowanie czasu pracy</span>
+          <span className="text-xs md:text-sm text-white font-medium">Automatic adaptation of work time</span>
         </div>
       </div>
 
@@ -194,7 +194,7 @@ export default function PomodoroPage() {
         <div className="px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-xs sm:text-sm md:text-base font-semibold border-2 bg-white/10 text-white border-white/30">
           {mode === 'work' && <Briefcase className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />}
           {mode !== 'work' && <Coffee className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />}
-          {mode === 'work' ? 'Sesja Pracy' : mode === 'shortBreak' ? 'Krótka Przerwa' : 'Długa Przerwa'}
+          {mode === 'work' ? 'Work session' : mode === 'shortBreak' ? 'Short Break' : 'Long Break'}
         </div>
       </div>
 
@@ -254,7 +254,7 @@ export default function PomodoroPage() {
               {isActive ? (
                 <>
                   <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
-                  Pauza
+                  Pause
                 </>
               ) : (
                 <>
@@ -276,7 +276,7 @@ export default function PomodoroPage() {
 
       {/* Pomodoro Counter */}
       <div className="bg-white/5 backdrop-blur-lg rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border-2 border-white/20 text-center">
-        <h4 className="text-sm sm:text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Ukończone Pomodoro</h4>
+        <h4 className="text-sm sm:text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Finished Pomodoro</h4>
         <div className="flex justify-center gap-1.5 sm:gap-2">
           {[...Array(completedPomodoros % 4 || (completedPomodoros > 0 ? 4 : 0))].map((_, i) => (
             <div key={i} className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white"></div>
@@ -286,7 +286,7 @@ export default function PomodoroPage() {
           ))}
         </div>
         <p className="text-white/70 text-xs sm:text-sm mt-2 md:mt-3">
-          Łącznie: <span className="font-bold text-white">{completedPomodoros}</span> pomodoro
+          Total: <span className="font-bold text-white">{completedPomodoros}</span> pomodoro
         </p>
       </div>
       

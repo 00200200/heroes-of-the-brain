@@ -8,38 +8,38 @@ type Phase = 'idle' | 'countdown' | 'inhale' | 'hold-in' | 'exhale' | 'hold-out'
 
 const PHASE_CONFIG = {
   idle: {
-    text: "Gotowy?",
-    instruction: "Naciśnij start, aby rozpocząć",
+    text: "Ready?",
+    instruction: "Press start to begin",
     scale: "scale-100",
     duration: "duration-300",
   },
   countdown: {
     text: "",
-    instruction: "Przygotuj się...",
+    instruction: "Get ready...",
     scale: "scale-100",
     duration: "duration-300",
   },
   inhale: {
     text:"",
-    instruction: "Nabieraj powietrze nosem...",
+    instruction: "Inhale through your nose...",
     scale: "scale-150",
     duration: "duration-[4000ms]",
   },
   'hold-in': {
     text: "",
-    instruction: "Trzymaj powietrze w płucach",
+    instruction: "Hold it in your lungs",
     scale: "scale-150",
     duration: "duration-0",
   },
   exhale: {
     text: "",
-    instruction: "Wypuszczaj powietrze ustami...",
+    instruction: "Exhale through your mouth...",
     scale: "scale-100",
     duration: "duration-[4000ms]",
   },
   'hold-out': {
     text:"",
-    instruction: "Nie nabieraj jeszcze powietrza",
+    instruction: "Hold your breath",
     scale: "scale-100",
     duration: "duration-0",
   },
@@ -130,7 +130,7 @@ return (
         <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-3">
           Box Breathing
         </h2>
-        <p className="text-gray-400 text-lg">Uspokój oddech w 4 krokach</p>
+        <p className="text-gray-400 text-lg">Relax your breath in 4 steps</p>
       </div>
 
        {/* Główna animacja */}
@@ -256,9 +256,9 @@ return (
           ) : (
             <span className="text-white font-semibold text-xl tracking-wide drop-shadow-lg">
               {isActive && phase !== 'idle' ? 
-                phase === 'inhale' ? 'Wdech' : 
-                phase === 'exhale' ? 'Wydech' : 
-                'Trzymaj' 
+                phase === 'inhale' ? 'Inhale' : 
+                phase === 'exhale' ? 'Exhale' : 
+                'Hold' 
               : ''}
             </span>
           )}
@@ -287,19 +287,19 @@ return (
         {isActive ? (
             <>
                 <Square size={20} fill="currentColor" /> 
-                <span>Zatrzymaj</span>
+                <span>Stop</span>
             </>
         ) : (
             <>
                 {phase === 'idle' ? (
                   <>
                     <Play size={20} fill="currentColor" />
-                    <span>Rozpocznij</span>
+                    <span>Begim</span>
                   </>
                 ) : (
                   <>
                     <RefreshCcw size={20} />
-                    <span>Ponów</span>
+                    <span>Retry</span>
                   </>
                 )}
             </>

@@ -7,11 +7,11 @@ export default function MusicPlayer() {
 
   // Mapowanie nazw typów na ładne etykiety
   const labels: Record<string, string> = {
-    focus: "Tryb Skupienia",
-    relax: "Relaks",
-    energy: "Energia",
-    deep_relax: "Głęboki Relaks",
-    none: "Cisza"
+    focus: "Focus",
+    relax: "Relax",
+    energy: "Energy",
+    deep_relax: "Deep Relax",
+    none: "Silence"
   };
   
   // Kolory dla różnych trybów
@@ -29,7 +29,7 @@ export default function MusicPlayer() {
       {/* Etykieta (pokazuje się tylko gdy coś gra) */}
       {currentType !== 'none' && (
         <div className="bg-gray-900/80 backdrop-blur text-white text-xs py-1 px-3 rounded-full mb-1 animate-fade-in">
-          Teraz: {labels[currentType]}
+          Now playing: {labels[currentType]}
         </div>
       )}
 

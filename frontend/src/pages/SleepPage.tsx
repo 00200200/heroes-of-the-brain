@@ -44,33 +44,41 @@ const StarBackground = () => {
 type SleepPhase = 'intro' | 'feet' | 'legs' | 'stomach' | 'shoulders' | 'face' | 'complete';
 
 const SLEEP_SEQUENCE: Record<SleepPhase, { title: string; instruction: string; duration: number }> = {
-	intro: { title: 'Przygotowanie do snu', instruction: 'Połóż się wygodnie i zamknij oczy...', duration: 5000 },
+	intro: { 
+        title: 'Sleep Preparation', 
+        instruction: 'Lie down comfortably and close your eyes...', 
+        duration: 5000 
+    },
 	feet: {
-		title: 'Stopy i Kostki',
-		instruction: 'Poczuj ciężar swoich stóp. Napnij je lekko, a potem całkowicie rozluźnij...',
+		title: 'Feet and Ankles',
+		instruction: 'Feel the weight of your feet. Tense them slightly, then relax them completely...',
 		duration: 10000,
 	},
 	legs: {
-		title: 'Łydki i Uda',
-		instruction: 'Poczuj jak ciepło rozlewa się po twoich nogach. Pozwól im zapaść się w materac...',
+		title: 'Calves and Thighs',
+		instruction: 'Feel how warmth spreads through your legs. Let them sink into the mattress...',
 		duration: 10000,
 	},
 	stomach: {
-		title: 'Brzuch i Oddech',
-		instruction: 'Oddychaj głęboko do brzucha. Z każdym wydechem uwalniasz napięcie...',
+		title: 'Stomach and Breath',
+		instruction: 'Breathe deeply into your stomach. With every exhale, release the tension...',
 		duration: 10000,
 	},
 	shoulders: {
-		title: 'Ramiona i Szyja',
-		instruction: 'Opuść ramiona. Poczuj jak cały stres dnia spływa z ciebie na podłogę...',
+		title: 'Shoulders and Neck',
+		instruction: 'Drop your shoulders. Feel the day\'s stress flowing off you onto the floor...',
 		duration: 10000,
 	},
 	face: {
-		title: 'Twarz i Oczy',
-		instruction: 'Rozluźnij szczękę. Niech twoje powieki staną się przyjemnie ciężkie...',
+		title: 'Face and Eyes',
+		instruction: 'Relax your jaw. Let your eyelids become pleasantly heavy...',
 		duration: 10000,
 	},
-	complete: { title: 'Błogi Spokój', instruction: 'Jesteś gotowy do snu. Dobranoc.', duration: 0 },
+	complete: { 
+        title: 'Blissful Calm', 
+        instruction: 'You are ready to sleep. Goodnight.', 
+        duration: 0 
+    },
 };
 
 const PHASE_ORDER: SleepPhase[] = ['intro', 'feet', 'legs', 'stomach', 'shoulders', 'face', 'complete'];
@@ -197,10 +205,10 @@ export default function SleepPreparationPage() {
 					<div className='text-center mb-10 z-10 !opacity-100'>
 						<div className='flex items-center justify-center gap-3 mb-3 text-indigo-300'>
 							<CloudMoon size={32} />
-							<span className='uppercase tracking-widest text-xs font-bold'>Tryb Nocny</span>
+							<span className='uppercase tracking-widest text-xs font-bold'>Night mode</span>
 						</div>
-						<h2 className='text-3xl md:text-4xl font-bold text-slate-100 mb-2 drop-shadow-lg'>Wieczorne Wyciszenie</h2>
-						<p className='text-slate-300 max-w-md mx-auto'>Skanowanie ciała – progresywna relaksacja.</p>
+						<h2 className='text-3xl md:text-4xl font-bold text-slate-100 mb-2 drop-shadow-lg'>Evening rest</h2>
+						<p className='text-slate-300 max-w-md mx-auto'>Technology-aided relaxation</p>
 					</div>
 
 					{/* Wizualizacja */}
@@ -248,12 +256,12 @@ export default function SleepPreparationPage() {
             `}>
 						{isActive ? (
 							<>
-								<Square size={20} fill='currentColor' /> Pauza
+								<Square size={20} fill='currentColor' /> Pause
 							</>
 						) : (
 							<>
 								<Play size={20} fill='currentColor' />
-								{currentPhaseKey === 'complete' ? 'Zacznij od nowa' : 'Rozpocznij relaksację'}
+								{currentPhaseKey === 'complete' ? 'Start Over' : 'Begin Relaxation'}
 							</>
 						)}
 					</button>
