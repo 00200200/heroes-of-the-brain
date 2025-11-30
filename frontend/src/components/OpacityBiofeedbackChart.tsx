@@ -93,6 +93,7 @@ export default function BiofeedbackChart() {
 
     return (
         <div className={'font-mono w-full bg-white p-6 opacity-75 backdrop-blur-lg rounded-3xl border border-gray-800 shadow-2xl'}>
+        <div className={'font-mono w-full bg-black/40 backdrop-blur-lg p-6 rounded-3xl border border-gray-800 shadow-2xl'}>
             <div className='flex justify-between items-center mb-6'>
                 <div>
                     <h3 className='text-xl font-bold text-white'>Biofeedback Trends</h3>

@@ -1,39 +1,46 @@
 import { RefreshCcw, Square, Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import BiofeedbackChart from '../components/BiofeedbackChart';
+import OpacityBiofeedbackChart from '../components/OpacityBiofeedbackChart';
+import forestGif from '../assets/forest.gif';
 
 // Definicja faz cyklu
-type Phase = 'idle' | 'inhale' | 'hold-in' | 'exhale' | 'hold-out';
+type Phase = 'idle' | 'countdown' | 'inhale' | 'hold-in' | 'exhale' | 'hold-out';
 
 const PHASE_CONFIG = {
   idle: {
     text: "Gotowy?",
     instruction: "Naciśnij start, aby rozpocząć",
-    scale: "scale-100", // Rozmiar początkowy
-    duration: "duration-300", // Szybka reakcja przy resecie
+    scale: "scale-100",
+    duration: "duration-300",
+  },
+  countdown: {
+    text: "",
+    instruction: "Przygotuj się...",
+    scale: "scale-100",
+    duration: "duration-300",
   },
   inhale: {
     text:"",
     instruction: "Nabieraj powietrze nosem...",
-    scale: "scale-150", // Kółko rośnie (1.5x)
-    duration: "duration-[4000ms]", // Zmiana w 4 sekundy
+    scale: "scale-150",
+    duration: "duration-[4000ms]",
   },
   'hold-in': {
     text: "",
     instruction: "Trzymaj powietrze w płucach",
-    scale: "scale-150", // Zostaje duże
-    duration: "duration-0", // Brak animacji zmiany rozmiaru (bo się nie zmienia)
+    scale: "scale-150",
+    duration: "duration-0",
   },
   exhale: {
     text: "",
     instruction: "Wypuszczaj powietrze ustami...",
-    scale: "scale-100", // Wraca do oryginału
-    duration: "duration-[4000ms]", // Zmiana w 4 sekundy
+    scale: "scale-100",
+    duration: "duration-[4000ms]",
   },
   'hold-out': {
     text:"",
     instruction: "Nie nabieraj jeszcze powietrza",
-    scale: "scale-100", // Zostaje małe
+    scale: "scale-100",
     duration: "duration-0",
   },
 };
@@ -41,6 +48,7 @@ const PHASE_CONFIG = {
 export default function BoxBreathing() {
     const [isActive, setIsActive] = useState(false);
     const [phase, setPhase] = useState<Phase>('idle');
+    const [countdown, setCountdown] = useState<number>(0);
 
     useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -48,7 +56,15 @@ export default function BoxBreathing() {
     if (isActive) {
         switch (phase) {
             case 'idle':
-                setPhase('inhale');
+                setPhase('countdown');
+                setCountdown(3);
+                break;
+            case 'countdown':
+                if (countdown > 1) {
+                    timeout = setTimeout(() => setCountdown(countdown - 1), 1000);
+                } else {
+                    timeout = setTimeout(() => setPhase('inhale'), 1000);
+                }
                 break;
             case 'inhale':
                 timeout = setTimeout(() => setPhase('hold-in'), 4000)
@@ -65,55 +81,193 @@ export default function BoxBreathing() {
         }
 } else {
         setPhase('idle');
+        setCountdown(0);
         if (timeout) clearTimeout(timeout);
     }
 
     return () => {
         if (timeout) clearTimeout(timeout);
     };
-}, [isActive, phase]);
+}, [isActive, phase, countdown]);
 
 const handleToggle = () => setIsActive(!isActive);
 const currentConfig = PHASE_CONFIG[phase];
 
 return (
-  <div>
-    <BiofeedbackChart />
-    <div className="font-mono flex flex-col items-center justify-center min-h-[500px] w-full bg-green-50 p-6 rounded-3xl">
+  <div className="relative w-full max-w-xl lg:max-w-2xl mx-auto px-4">
+    {/* Background GIF */}
+    <div className="fixed inset-0 z-0 pointer-events-none">
+      <img
+        src={forestGif}
+        alt="Forest background"
+        className="w-full h-full object-cover opacity-60"
+      />
+    </div>
+    
+    {/* Content wrapper */}
+    <div className="relative z-10">
+      <div className="font-mono">
+        <OpacityBiofeedbackChart />
+        <div className="relative flex flex-col items-center justify-center min-h-[500px] w-full bg-black/40 backdrop-blur-md p-8 rounded-3xl border-2 border-white/20 shadow-2xl overflow-hidden mt-8">
+      {/* Futuristic animated background */}
+      <div className="absolute inset-0 opacity-30">
+        {/* Animated gradient orbs */}
+        <div className="absolute top-10 left-10 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }} />
+        
+        {/* Grid pattern */}
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px)',
+          backgroundSize: '50px 50px'
+        }} />
+      </div>
+
+      {/* Content layer */}
+      <div className="relative z-10 flex flex-col items-center w-full">
      {/* Nagłówek */}
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-green-800 mb-2">Box Breathing</h2>
-        <p className="text-green-600">Uspokój oddech w 4 krokach</p>
+      <div className="text-center mb-12 animate-fade-in">
+        <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-3">
+          Box Breathing
+        </h2>
+        <p className="text-gray-400 text-lg">Uspokój oddech w 4 krokach</p>
       </div>
 
        {/* Główna animacja */}
-      <div className="relative flex items-center justify-center w-64 h-64 mb-12">
-        {/* Tło "duch" pokazujące maksymalny rozmiar */}
-        <div className="absolute w-32 h-32 bg-green-200 rounded-full scale-150 opacity-20" />
+      <div className="relative flex items-center justify-center w-80 h-80 mb-12">
+        <style>{`
+          @keyframes drawLine {
+            from {
+              stroke-dashoffset: 200;
+            }
+            to {
+              stroke-dashoffset: 0;
+            }
+          }
+          .animate-draw-line {
+            animation: drawLine 4s linear forwards;
+          }
+        `}</style>
         
-        {/* Właściwe animowane koło */}
-        <div
-          className={`
-            flex items-center justify-center
-            w-32 h-32 bg-gradient-to-br from-green-400 to-green-600 
-            rounded-full shadow-xl shadow-green-200
-            transition-all ease-linear
-            ${currentConfig.scale}
-            ${currentConfig.duration}
-          `}
+        {/* SVG phase-synced drawing animation */}
+        <svg
+          className="absolute"
+          width="320"
+          height="320"
+          viewBox="0 0 320 320"
+          style={{
+            filter: 'drop-shadow(0 0 15px rgba(6, 182, 212, 0.6))'
+          }}
         >
-          <span className="text-white font-bold text-lg animate-pulse">
-            {isActive && phase !== 'idle' ? phase === 'inhale' ? 'Wdech' : phase === 'exhale' ? 'Wydech' : 'czymaj' : ''}
-          </span>
+          {/* Ghost outline showing full path */}
+          <rect
+            x="60"
+            y="60"
+            width="200"
+            height="200"
+            fill="none"
+            stroke="rgba(6, 182, 212, 0.15)"
+            strokeWidth="2"
+          />
+          
+          {/* Animated drawing line - progressively draws each side */}
+          {(isActive && phase !== 'idle' && phase !== 'countdown') && (
+            <>
+              {/* Top side - Inhale - draws left to right */}
+              <line
+                x1="60"
+                y1="60"
+                x2="260"
+                y2="60"
+                stroke="rgba(6, 182, 212, 1)"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeDasharray="200"
+                strokeDashoffset="200"
+                className={phase === 'inhale' ? 'animate-draw-line' : ''}
+                style={{
+                  strokeDashoffset: phase === 'inhale' ? undefined : '0'
+                }}
+              />
+              
+              {/* Right side - Hold-in - draws top to bottom */}
+              {(phase === 'hold-in' || phase === 'exhale' || phase === 'hold-out') && (
+                <line
+                  x1="260"
+                  y1="60"
+                  x2="260"
+                  y2="260"
+                  stroke="rgba(6, 182, 212, 1)"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray="200"
+                  strokeDashoffset="200"
+                  className={phase === 'hold-in' ? 'animate-draw-line' : ''}
+                  style={{
+                    strokeDashoffset: phase === 'hold-in' ? undefined : '0'
+                  }}
+                />
+              )}
+              
+              {/* Bottom side - Exhale - draws right to left */}
+              {(phase === 'exhale' || phase === 'hold-out') && (
+                <line
+                  x1="260"
+                  y1="260"
+                  x2="60"
+                  y2="260"
+                  stroke="rgba(6, 182, 212, 1)"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray="200"
+                  strokeDashoffset="200"
+                  className={phase === 'exhale' ? 'animate-draw-line' : ''}
+                  style={{
+                    strokeDashoffset: phase === 'exhale' ? undefined : '0'
+                  }}
+                />
+              )}
+              
+              {/* Left side - Hold-out - draws bottom to top */}
+              {phase === 'hold-out' && (
+                <line
+                  x1="60"
+                  y1="260"
+                  x2="60"
+                  y2="60"
+                  stroke="rgba(6, 182, 212, 1)"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray="200"
+                  strokeDashoffset="200"
+                  className="animate-draw-line"
+                />
+              )}
+            </>
+          )}
+        </svg>
+        
+        {/* Center content */}
+        <div className="relative flex items-center justify-center z-10">
+          {phase === 'countdown' ? (
+            <span className="text-white font-bold text-6xl">
+              {countdown}
+            </span>
+          ) : (
+            <span className="text-white font-semibold text-xl tracking-wide drop-shadow-lg">
+              {isActive && phase !== 'idle' ? 
+                phase === 'inhale' ? 'Wdech' : 
+                phase === 'exhale' ? 'Wydech' : 
+                'Trzymaj' 
+              : ''}
+            </span>
+          )}
         </div>
       </div>
 
     {/* Instrukcje tekstowe */}
-      <div className="text-center h-20 mb-8 transition-opacity duration-500">
-        {/* <h3 className="text-4xl font-bold text-green-700 mb-2">
-          {currentConfig.text}
-        </h3> */}
-        <p className="text-green-600 text-lg font-medium">
+      <div className="text-center h-20 mb-10 transition-all duration-500">
+        <p className="text-gray-300 text-xl font-medium tracking-wide drop-shadow-lg">
           {currentConfig.instruction}
         </p>
       </div>
@@ -122,24 +276,38 @@ return (
       <button
         onClick={handleToggle}
         className={`
-          flex items-center gap-2 px-8 py-3 rounded-full font-bold text-lg text-white transition-all
+          flex items-center gap-2 px-8 py-3 rounded-lg font-bold text-base transition-all duration-300 text-white
           ${isActive 
-            ? 'bg-red-500 hover:bg-red-600 shadow-red-200' 
-            : 'bg-green-600 hover:bg-green-700 shadow-green-200'
-          } shadow-lg hover:scale-105 active:scale-95
+            ? 'bg-red-500/80 hover:bg-red-600 border-2 border-red-500/50 hover:border-red-500' 
+            : 'bg-white/10 border-2 border-white/30 hover:bg-white/20 hover:border-white/40'
+          } 
+          shadow-lg hover:scale-105 active:scale-95
         `}
       >
         {isActive ? (
             <>
-                <Square size={20} fill="currentColor" /> Zatrzymaj
+                <Square size={20} fill="currentColor" /> 
+                <span>Zatrzymaj</span>
             </>
         ) : (
             <>
-                {phase === 'idle' ? <Play size={20} fill="currentColor" /> : <RefreshCcw size={20} />}
-                {phase === 'idle' ? 'Rozpocznij' : ''}
+                {phase === 'idle' ? (
+                  <>
+                    <Play size={20} fill="currentColor" />
+                    <span>Rozpocznij</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCcw size={20} />
+                    <span>Ponów</span>
+                  </>
+                )}
             </>
     )}
       </button>
+      </div>
+    </div>
+      </div>
     </div>
   </div>
 );
