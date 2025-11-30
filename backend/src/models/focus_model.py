@@ -18,9 +18,9 @@ class FocusModel:
 
     def __init__(self):
         self._level = 0
-        # Adaptacyjny zakres normalizacji
-        self._min = 0.1  # domyślny dolny zakres (bardziej czuły)
-        self._max = 1.0  # domyślny górny zakres (bardziej czuły)
+        # Adaptive normalization range
+        self._min = 0.1  # default lower bound (more sensitive)
+        self._max = 1.0  # default upper bound (more sensitive)
 
     def calculate(self, focus_ratio: list[float]) -> None:
         """Calculate and update the focus level using adaptive normalization (beta/theta).
@@ -29,12 +29,12 @@ class FocusModel:
             focus_ratio: List of beta/theta values.
         """
         val = np.mean(focus_ratio)
-        # Adaptacyjna aktualizacja zakresu
+        # Adaptive range update
         if val < self._min:
             self._min = val
         if val > self._max:
             self._max = val
-        # Zabezpieczenie przed zbyt małym zakresem
+        # Prevent too small range
         eps = 1e-3
         rng = max(self._max - self._min, eps)
         norm = (val - self._min) / rng

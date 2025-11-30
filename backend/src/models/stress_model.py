@@ -29,7 +29,7 @@ class StressModel:
             dummy: Unused, for compatibility.
         """
         val = np.mean(stress_metric)
-        # Normalizacja: typowo FAA+beta/alpha w okolicach 0-5, mapujemy 0-5 na 0-100
+        # Norm: map from approx -2.5..2.5 to 0..1
         norm = np.clip((val + 2.5) / 5.0, 0.0, 1.0)
         if not np.isfinite(norm):
             self._level = 0

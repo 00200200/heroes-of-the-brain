@@ -14,6 +14,10 @@ from src.models.tiredness_model import tiredness_service
 _eeg_buffer = deque(maxlen=24)
 
 from scipy.signal import butter, sosfiltfilt
+"""
+Metrics buffer and utility functions for EEG analysis.
+"""
+
 # --- EEG band definitions (Hz)
 BANDS = {
     'delta': (1, 4),
@@ -48,11 +52,11 @@ def mean_metrics():
     all_eeg = np.vstack([e for (ts, e) in _eeg_buffer])
     all_ts = [ts for (ts, e) in _eeg_buffer]
     mean_ts = float(np.mean(all_ts))
-    # Zakładamy sfreq 250 Hz (jak w connector.py)
+    # Assume sfreq 250 Hz (as in connector.py)
     sfreq = 250
-    # Wylicz bandpower dla każdego kanału i pasma
+    # Calculate bandpower for each channel and band
     n_channels = all_eeg.shape[1]
-    # Licz bandpower na całym sygnale z bufora (ostatnie 2 minuty)
+    # Calculate bandpower on the whole buffer signal (last 2 minutes)
     alpha = np.zeros(n_channels)
     beta = np.zeros(n_channels)
     theta = np.zeros(n_channels)
@@ -60,7 +64,7 @@ def mean_metrics():
         alpha[ch] = bandpower_rms(all_eeg[:, ch], sfreq, BANDS['alpha'])
         beta[ch] = bandpower_rms(all_eeg[:, ch], sfreq, BANDS['beta'])
         theta[ch] = bandpower_rms(all_eeg[:, ch], sfreq, BANDS['theta'])
-    # Focus: Beta/Theta dla F3,F4,C3,C4
+    # Focus: Beta/Theta for F3,F4,C3,C4
     beta_fc = np.mean(beta[[0,1,2,3]])
     theta_fc = np.mean(theta[[0,1,2,3]])
     # Stress: FAA (alpha F4 - F3), beta/alpha F3,F4
@@ -68,12 +72,12 @@ def mean_metrics():
     alpha_f4 = alpha[1]
     beta_f3f4 = np.mean(beta[[0,1]])
     alpha_f3f4 = np.mean(alpha[[0,1]])
-    # Tiredness: (theta+alpha)/total dla P3,P4,O1,O2
+    # Tiredness: (theta+alpha)/total for P3,P4,O1,O2
     theta_po = np.mean(theta[[4,5,6,7]])
     alpha_po = np.mean(alpha[[4,5,6,7]])
     beta_po = np.mean(beta[[4,5,6,7]])
     total_po = np.abs(alpha_po) + np.abs(beta_po) + np.abs(theta_po) + 1e-6
-    # Licz metryki
+    # Calculate metrics
     focus_ratio = beta_fc / (theta_fc + 1e-6)
     focus_service.calculate([focus_ratio])
     faa = np.log(alpha_f4 + 1e-6) - np.log(alpha_f3 + 1e-6)

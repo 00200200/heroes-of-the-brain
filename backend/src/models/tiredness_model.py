@@ -29,7 +29,7 @@ class TirednessModel:
             dummy1, dummy2: Unused, for compatibility.
         """
         val = np.mean(tiredness_metric)
-        # Normalizacja: typowo 0-1, mapujemy 0-1 na 0-100
+        # Norm: map from 0..1 to 0..1
         norm = np.clip(val, 0.0, 1.0)
         self._level = int(norm * 100)
         logging.getLogger(__name__).info(
