@@ -6,7 +6,7 @@ for stress, focus, and tiredness.
 
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Body
 from pydantic import BaseModel
 
 from src.models import mean_metrics, update_models_from_latest_csv
@@ -150,3 +150,20 @@ async def get_next_pomodoro_step():
         pomodoro_stepper.reset()
         step = pomodoro_stepper.next_step()
     return step
+
+@router.post("/pomodoro/update_times")
+async def update_pomodoro_times(
+    work_time: int = Body(..., embed=True),
+    short_break_time: int = Body(..., embed=True),
+    long_break_time: int = Body(..., embed=True),
+):
+    """
+    Update Pomodoro stepper times (work, short break, long break) in minutes.
+    """
+    global pomodoro_stepper
+    pomodoro_stepper = PomodoroStepper(
+        session_length=work_time,
+        break_length=short_break_time,
+        long_break_length=long_break_time,
+    )
+    return {"status": "ok", "work_time": work_time, "short_break_time": short_break_time, "long_break_time": long_break_time}
