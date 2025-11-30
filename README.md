@@ -29,6 +29,12 @@
    - Backend: http://localhost:8000
    - Documentation API: http://localhost:8000/docs
 
+4. **Run backend**
+   ``` 
+       cd backend
+       uv run src/connector.py
+   ```
+
 ### Run without docker
 
 #### Backend
@@ -38,6 +44,7 @@ cd backend
 pip install uv
 uv sync
 uv run uvicorn src.main:app
+uv run src/connector.py
 ```
 
 #### Frontend

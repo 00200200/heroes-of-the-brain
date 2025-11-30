@@ -19,36 +19,45 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     }
     return null;
 };
+const STORAGE_KEY = 'opacity_biofeedback_history';
 
 export default function BiofeedbackChart() {
-    const [data, setData] = useState<MentalMetrics[]>([]);
-    const [loading, setLoading] = useState(true);
+    // 1. INICJALIZACJA Z LOCALSTORAGE
+    const [data, setData] = useState<MentalMetrics[]>(() => {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+            console.error("Błąd odczytu z localStorage", e);
+            return [];
+        }
+    });
+    
+    const [loading, setLoading] = useState(data.length === 0); // Loading tylko jeśli nie mamy starych danych
     const [error, setError] = useState<string | null>(null);
 
-
-        useEffect(() => {
+    useEffect(() => {
         let timeoutId: ReturnType<typeof setTimeout>;
 
         const fetchData = async () => {
             try {
-                // 1. Pobieramy JEDEN aktualny punkt z backendu
-                const newPoint = await apiService.getMentalMetrics(); 
-                newPoint.timestamp = new Date().toLocaleTimeString(); // Dodajemy czytelny czas
-				//ucinamy rok, miesiac, dzien
-				newPoint.timestamp = newPoint.timestamp.slice(0, 8);
+                const newPoint = await apiService.getMentalMetrics();
                 
-                // 2. Dodajemy go do istniejącej historii (używając callbacka w setData)
-                setData(prevData => {
-                    // Tworzymy nową tablicę: [...stare, nowy]
-                    const updatedHistory = [...prevData, newPoint];
+                // Formatowanie czasu
+                newPoint.timestamp = new Date().toLocaleTimeString().slice(0, 8);
 
-                    // 3. Ograniczamy historię do ostatnich 20 punktów
-                    // (żeby wykres nie ścisnął się w nieskończoność po godzinie działania)
-                    if (updatedHistory.length > 50) {
-                        return updatedHistory.slice(-50); // Zwróć tylko 20 ostatnich
-                    }
+                setData(prevData => {
+                    const updatedHistory = [...prevData, newPoint];
                     
-                    return updatedHistory;
+                    // Przycinanie do 50
+                    const finalHistory = updatedHistory.length > 50 
+                        ? updatedHistory.slice(-50) 
+                        : updatedHistory;
+
+                    // 2. ZAPIS DO LOCALSTORAGE
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(finalHistory));
+                    
+                    return finalHistory;
                 });
                 
                 setError(null);
@@ -56,7 +65,6 @@ export default function BiofeedbackChart() {
                 console.error('Error fetching metrics:', err);
             } finally {
                 setLoading(false);
-                // 4. Czekamy 5 sekund na kolejne pobranie
                 timeoutId = setTimeout(fetchData, 2000);
             }
         };

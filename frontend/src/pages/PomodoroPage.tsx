@@ -6,18 +6,28 @@ import OpacityBiofeedbackChart from '../components/OpacityBiofeedbackChart';
 // 1. DODANO: import serwisu API
 import { apiService, type TimerConfig } from '../services/api';
 
+const POMODORO_CONFIG_KEY = 'pomodoro_config';
+
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
 // 2. ZMIANA: To teraz służy jako wartości startowe (fallback), zanim przyjdą dane z API
 const FALLBACK_CONFIG: TimerConfig = {
-  work: 25 * 60,
+  work: 10 * 60,
   shortBreak: 5 * 60,
   longBreak: 15 * 60,
 };
 
 export default function PomodoroPage() {
-  // 3. DODANO: Stan trzymający konfigurację (zaczyna od fallbacka)
-  const [config, setConfig] = useState<TimerConfig>(FALLBACK_CONFIG);
+  // 1. ZMIANA: Inicjalizacja z LocalStorage
+  const [config, setConfig] = useState<TimerConfig>(() => {
+      try {
+          const saved = localStorage.getItem(POMODORO_CONFIG_KEY);
+          // Jeśli są dane w LS, użyj ich, w przeciwnym razie użyj FALLBACK
+          return saved ? JSON.parse(saved) : FALLBACK_CONFIG;
+      } catch (e) {
+          return FALLBACK_CONFIG;
+      }
+  });
 
   const [mode, setMode] = useState<TimerMode>('work');
   const [timeLeft, setTimeLeft] = useState(FALLBACK_CONFIG.work);
@@ -25,26 +35,26 @@ export default function PomodoroPage() {
   const [completedPomodoros, setCompletedPomodoros] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // 4. DODANO: Pobieranie konfiguracji z backendu po załadowaniu strony
-  useEffect(() => {
+ useEffect(() => {
     const fetchConfig = async () => {
       try {
-        // Zakładam, że dodałeś metodę getPomodoroConfig do apiService
         const apiConfig = await apiService.getPomodoroConfig();
-        console.log("Pobrany config z API:", apiConfig);
+        
+        // 2. ZMIANA: Zapis do LocalStorage po udanym fetchu
+        localStorage.setItem(POMODORO_CONFIG_KEY, JSON.stringify(apiConfig));
+        
         setConfig(apiConfig);
         
-        // Jeśli timer nie odlicza, zaktualizuj od razu czas na ekranie
         if (!isActive) {
             setTimeLeft(apiConfig[mode]);
         }
       } catch (error) {
-        console.error("Błąd pobierania configu, używam domyślnego:", error);
+        console.error("Błąd pobierania configu - zostaję przy wersji z localStorage/fallback:", error);
       }
     };
     fetchConfig();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Wywołaj tylko raz
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 5. ZMIANA: Używamy 'config' zamiast stałej
   const totalTime = config[mode];
