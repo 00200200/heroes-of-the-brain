@@ -116,7 +116,7 @@ export default function HomePage() {
 					<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
 						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-red-500/40 transition-all'>
 							<div className='flex items-center justify-between mb-3'>
-								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Stres</span>
+								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Average Stres</span>
 								<span className='text-3xl font-bold text-red-400'>{metrics.stress_level}%</span>
 							</div>
 							<div className='w-full bg-gray-800 rounded-full h-2 overflow-hidden'>
@@ -129,7 +129,7 @@ export default function HomePage() {
 
 						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-cyan-500/40 transition-all'>
 							<div className='flex items-center justify-between mb-3'>
-								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Focus</span>
+								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Average Focus</span>
 								<span className='text-3xl font-bold text-cyan-400'>{metrics.focus_level}%</span>
 							</div>
 							<div className='w-full bg-gray-800 rounded-full h-2 overflow-hidden'>
@@ -142,7 +142,7 @@ export default function HomePage() {
 
 						<div className='bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-purple-500/40 transition-all'>
 							<div className='flex items-center justify-between mb-3'>
-								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Zmęczenie</span>
+								<span className='text-base font-medium text-gray-400 uppercase tracking-wider'>Average Tiredness</span>
 								<span className='text-3xl font-bold text-purple-400'>{metrics.tiredness_level}%</span>
 							</div>
 							<div className='w-full bg-gray-800 rounded-full h-2 overflow-hidden'>
