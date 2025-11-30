@@ -154,3 +154,15 @@ async def update_pomodoro_times(
         long_break_length=long_break_time,
     )
     return {"status": "ok", "work_time": work_time, "short_break_time": short_break_time, "long_break_time": long_break_time}
+
+@router.get("/pomodoro/config")
+async def get_pomodoro_config():
+    """
+    Return current Pomodoro config (work, shortBreak, longBreak) in seconds.
+    """
+    # Użyj domyślnego PomodoroStepper z aktualnymi wartościami
+    return {
+        "work": pomodoro_stepper.session_length * 60,
+        "shortBreak": pomodoro_stepper.break_length * 60,
+        "longBreak": pomodoro_stepper.long_break_length * 60,
+    }
