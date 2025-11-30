@@ -1,7 +1,8 @@
-import { Play, Square, CloudMoon, CheckCircle2, Wind } from 'lucide-react';
+import { Play, Square, CloudMoon, CheckCircle2, Wind, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import BiofeedbackChart from '../components/BiofeedbackChart';
 import OpacityBiofeedbackChart from '../components/OpacityBiofeedbackChart';
+import sleepingAudio from '../assets/sleeping_voice.mp3';
 
 // --- TŁO (GWIAZDY) ---
 const StarBackground = () => {
@@ -78,12 +79,53 @@ export default function SleepPreparationPage() {
 	const [isActive, setIsActive] = useState(false);
 	const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
 	const [progress, setProgress] = useState(0);
+    
+    // --- AUDIO: Stan dla wyciszenia (opcjonalnie) ---
+    const [isMuted, setIsMuted] = useState(false);
 
 	const currentPhaseKey = PHASE_ORDER[currentPhaseIndex];
 	const currentConfig = SLEEP_SEQUENCE[currentPhaseKey];
 
 	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    
+    // --- AUDIO: Ref do przechowywania obiektu Audio ---
+    // Zakładam, że plik jest w folderze public. Jeśli nie, zmień ścieżkę.
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // --- AUDIO: Inicjalizacja ---
+    useEffect(() => {
+        audioRef.current = new Audio(sleepingAudio); // Ścieżka do pliku audio
+        audioRef.current.loop = false; // Czy ma lecieć w pętli? Raczej nie, jeśli to nagranie instruktażowe.
+        
+        return () => {
+            // Cleanup: zatrzymaj audio jak wyjdziemy ze strony
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []);
+
+    // --- AUDIO: Obsługa Play/Pause w zależności od isActive ---
+    useEffect(() => {
+        if (audioRef.current) {
+            if (isActive && currentPhaseKey !== 'complete') {
+                // Próba odtworzenia (przeglądarki mogą blokować autoplay, ale tutaj jest po kliknięciu usera, więc ok)
+                audioRef.current.play().catch(e => console.error("Audio play error:", e));
+            } else {
+                audioRef.current.pause();
+            }
+        }
+    }, [isActive, currentPhaseKey]);
+
+    // --- AUDIO: Obsługa Mute ---
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.muted = isMuted;
+        }
+    }, [isMuted]);
+
 
 	const nextStep = () => {
 		if (currentPhaseIndex < PHASE_ORDER.length - 1) {
@@ -122,18 +164,36 @@ export default function SleepPreparationPage() {
 		if (currentPhaseKey === 'complete') {
 			setCurrentPhaseIndex(0);
 			setProgress(0);
+            
+            // --- AUDIO: Reset do początku przy restarcie ---
+            if (audioRef.current) {
+                audioRef.current.currentTime = 0;
+            }
+            
 			setIsActive(true);
 		} else {
 			setIsActive(!isActive);
 		}
 	};
 
+    const toggleMute = () => setIsMuted(!isMuted);
+
 	return (
 		<div className='min-h-screen relative font-mono overflow-hidden'>
 			<StarBackground />
 
 			<div className='relative z-10 p-6 max-w-2xl mx-auto space-y-8'>
+
 				<div className='flex flex-col items-center justify-center min-h-[500px] w-full bg-slate-900/60 backdrop-blur-md text-slate-100 p-8 rounded-3xl shadow-2xl border border-indigo-500/20 relative'>
+                    
+                    {/* --- AUDIO: Przycisk Mute w rogu --- */}
+                    <button 
+                        onClick={toggleMute}
+                        className="absolute top-6 right-6 p-2 text-indigo-300 hover:text-white hover:bg-slate-800/50 rounded-full transition-colors z-20"
+                    >
+                        {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+                    </button>
+
 					<div className='text-center mb-10 z-10 !opacity-100'>
 						<div className='flex items-center justify-center gap-3 mb-3 text-indigo-300'>
 							<CloudMoon size={32} />
@@ -143,25 +203,22 @@ export default function SleepPreparationPage() {
 						<p className='text-slate-300 max-w-md mx-auto'>Skanowanie ciała – progresywna relaksacja.</p>
 					</div>
 
-					{/* --- NOWA WIZUALIZACJA (BĄBEL) --- */}
+					{/* Wizualizacja */}
 					<div className='relative mb-12 z-10'>
 						<div
 							className={`w-64 h-64 rounded-full border-4 flex items-center justify-center relative overflow-hidden
               ${isActive ? 'border-indigo-500/30 bg-slate-900/50' : 'border-slate-700/50 bg-slate-800/40'}
             `}>
-							{/* Wypełniające się koło w tle (zastępuje SVG) */}
 							{isActive && currentPhaseKey !== 'complete' && (
 								<div
 									className='absolute inset-0 bg-indigo-500/40 rounded-full'
 									style={{
 										transform: `scale(${progress / 80})`,
-										// Dodajemy transition, żeby wygładzić skoki co 50ms
 										transition: 'transform 100ms linear',
 									}}
 								/>
 							)}
 
-							{/* Ikona na wierzchu */}
 							<div
 								className={`relative z-10 transition-all duration-700 transform ${
 									isActive ? 'scale-110 text-indigo-100' : 'scale-100 text-slate-500'
